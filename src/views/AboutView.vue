@@ -6,6 +6,7 @@
         v-model="componentList"
         :animation="150"
         ghostClass="ghost"
+        :sort="false"
         :group="{ name: 'people', pull: 'clone', put: false }"
       >
         <div
@@ -44,13 +45,9 @@
     <div class="config w-60 p-4">
       <!-- <h1>表单</h1> -->
       <h1>组件</h1>
-      <div v-for="item in configList" :key="item.value">
-        {{ item.component.title }}:
-        <component
-          :is="item.component.component"
-          v-model="item.value"
-          v-bind="item.component.componentProps"
-        />
+      <div v-for="item in configList" :key="item.title">
+        {{ item.title }}:
+        <component :is="item.component" v-bind="item.componentProps" />
       </div>
     </div>
   </div>
@@ -73,40 +70,44 @@ type IItem = {
   width: number
   slot?: string
   componentProps?: Record<string, any>
+  on?: Record<string, (...any: any[]) => void>
 }
 
-const activeComponent = ref<IItem | null>(null)
-type IType = 'width' | 'placeholder' | 'showCount' | 'slot'
-type IConfigList = { value: string | number; type: IType; component: IItem }[]
-const configList = ref<IConfigList>([])
+const configList = ref<IItem[]>([])
 const setActive = (item: IItem) => {
-  activeComponent.value = item
-  const res: IConfigList = []
+  const itemRef = ref(item)
+  const widthRef = toRef(itemRef.value.width)
+  const res: IItem[] = []
   res.push({
-    value: item.width,
-    type: 'width',
-    component: {
-      component: 'a-slider',
-      title: '宽度',
-      width: 50,
-      componentProps: {
-        value: item.width,
-        min: 10,
-        max: 20
+    component: 'a-slider',
+    title: '宽度',
+    width: 50,
+    componentProps: {
+      value: widthRef,
+      min: 100,
+      max: 500
+    },
+    on: {
+      'update:value': (val: number) => {
+        itemRef.value.width = val
+        widthRef.value = val
       }
     }
   })
   if (item.slot) {
+    const slotRef = toRef(itemRef.value.slot)
     res.push({
-      value: item.slot,
-      type: 'slot',
-      component: {
-        component: 'a-input',
-        title: '按钮文本',
-        width: 50,
-        componentProps: {
-          placeholder: '请输入',
-          value: item.slot
+      component: 'a-input',
+      title: '按钮文本',
+      width: 50,
+      componentProps: {
+        placeholder: '请输入',
+        value: slotRef
+      },
+      on: {
+        'update:value': (val: string) => {
+          itemRef.value.slot = val
+          slotRef.value = val
         }
       }
     })
@@ -114,36 +115,64 @@ const setActive = (item: IItem) => {
   if (!item.componentProps) return
   const { placeholder, showCount } = item.componentProps
   if (placeholder) {
+    const placeholderRef = toRef(itemRef.value.componentProps!.placeholder)
     res.push({
-      value: placeholder,
-      type: 'placeholder',
-      component: {
-        component: 'a-input',
-        title: 'placeholder',
-        width: 50,
-        componentProps: {
-          placeholder: '请输入',
-          value: placeholder
+      component: 'a-input',
+      title: 'placeholder',
+      width: 50,
+      componentProps: {
+        placeholder: '请输入',
+        value: placeholderRef
+      },
+      on: {
+        'update:value': (val: string) => {
+          itemRef.value.componentProps!.placeholder = val
+          placeholderRef.value = val
         }
       }
     })
   }
   if (showCount) {
+    const showCountRef = toRef(itemRef.value.componentProps!.showCount)
     res.push({
-      value: showCount,
-      type: 'showCount',
-      component: {
-        component: 'a-checkbox',
-        title: '显示数字',
-        width: 50,
-        componentProps: {
-          checked: showCount
+      component: 'a-checkbox',
+      title: '显示数字',
+      width: 50,
+      componentProps: {
+        checked: showCountRef
+      },
+      on: {
+        'update:checked': (val: boolean) => {
+          itemRef.value.componentProps!.showCount = val
+          showCountRef.value = val
         }
       }
     })
   }
 
-  configList.value = res
+  configList.value = handleOn(res)
+  console.log(configList.value)
+}
+const handleOn = (list: IItem[]): IItem[] => {
+  return list.map((item) => {
+    const { componentProps = {}, on = {} } = item
+    const listens = Object.keys(on).reduce(
+      (pre, key) => {
+        const value = on[key]
+        const props = `on${key.slice(0, 1).toUpperCase()}${key.slice(1)}`
+        pre[props] = value
+        return pre
+      },
+      {} as Record<string, any>
+    )
+    return {
+      ...item,
+      componentProps: {
+        ...componentProps,
+        ...listens
+      }
+    }
+  })
 }
 const componentList: IItem[] = [
   {
