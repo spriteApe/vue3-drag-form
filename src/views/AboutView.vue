@@ -33,8 +33,8 @@
         <component
           :is="item.component"
           v-for="item in list2"
-          :key="item.component"
-          :style="{ width: item.width + 'px' }"
+          :key="item.id"
+          :style="item.width ? { width: item.width + 'px' } : {}"
           v-bind="item.componentProps"
           @click="setActive(item)"
         >
@@ -45,7 +45,7 @@
     <div class="config w-60 p-4">
       <!-- <h1>表单</h1> -->
       <h1>组件</h1>
-      <div v-for="item in configList" :key="item.title">
+      <div v-for="item in configList" :key="item.id">
         {{ item.title }}:
         <component :is="item.component" v-bind="item.componentProps" />
       </div>
@@ -54,12 +54,17 @@
 </template>
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus'
-
+import { v4 as uuidv4 } from 'uuid'
 function onUpdate() {
   console.log('update')
 }
 function onAdd() {
   console.log('add')
+  list2.value.forEach((item) => {
+    if (!item.id) {
+      item.id = uuidv4() // Generate a unique ID
+    }
+  })
 }
 function remove() {
   console.log('remove')
@@ -67,21 +72,23 @@ function remove() {
 type IItem = {
   title: string
   component: string
-  width: number
+  width?: number
   slot?: string
   componentProps?: Record<string, any>
   on?: Record<string, (...any: any[]) => void>
 }
-
-const configList = ref<IItem[]>([])
+type IItemContent = IItem & {
+  id: string
+}
+const configList = ref<IItemContent[]>([])
 const setActive = (item: IItem) => {
   const itemRef = ref(item)
-  const widthRef = toRef(itemRef.value.width)
-  const res: IItem[] = []
+  const widthRef = toRef(itemRef.value.width!)
+  const res: IItemContent[] = []
   res.push({
+    id: uuidv4(),
     component: 'a-slider',
     title: '宽度',
-    width: 50,
     componentProps: {
       value: widthRef,
       min: 100,
@@ -97,9 +104,9 @@ const setActive = (item: IItem) => {
   if (item.slot) {
     const slotRef = toRef(itemRef.value.slot)
     res.push({
+      id: uuidv4(),
       component: 'a-input',
       title: '按钮文本',
-      width: 50,
       componentProps: {
         placeholder: '请输入',
         value: slotRef
@@ -117,9 +124,9 @@ const setActive = (item: IItem) => {
   if (placeholder) {
     const placeholderRef = toRef(itemRef.value.componentProps!.placeholder)
     res.push({
+      id: uuidv4(),
       component: 'a-input',
       title: 'placeholder',
-      width: 50,
       componentProps: {
         placeholder: '请输入',
         value: placeholderRef
@@ -135,9 +142,9 @@ const setActive = (item: IItem) => {
   if (showCount) {
     const showCountRef = toRef(itemRef.value.componentProps!.showCount)
     res.push({
+      id: uuidv4(),
       component: 'a-checkbox',
       title: '显示数字',
-      width: 50,
       componentProps: {
         checked: showCountRef
       },
@@ -153,7 +160,7 @@ const setActive = (item: IItem) => {
   configList.value = handleOn(res)
   console.log(configList.value)
 }
-const handleOn = (list: IItem[]): IItem[] => {
+const handleOn = (list: IItemContent[]): IItemContent[] => {
   return list.map((item) => {
     const { componentProps = {}, on = {} } = item
     const listens = Object.keys(on).reduce(
@@ -207,10 +214,11 @@ const componentList: IItem[] = [
     }
   }
 ]
-const list2 = ref<IItem[]>([])
+const list2 = ref<IItemContent[]>([])
 const addComponent = (item: IItem) => {
-  list2.value.push(item)
-  setActive(item)
+  const itemContent = { ...item, id: uuidv4() }
+  list2.value.push(itemContent)
+  setActive(itemContent)
 }
 </script>
 <style lang="scss" scoped></style>

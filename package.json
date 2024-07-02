@@ -16,6 +16,7 @@
     "ant-design-vue": "^4.2.3",
     "pinia": "^2.1.7",
     "unocss": "^0.61.0",
+    "uuid": "^10.0.0",
     "vue": "^3.4.29",
     "vue-draggable-plus": "^0.5.0",
     "vue-router": "^4.3.3"
