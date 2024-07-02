@@ -22,6 +22,7 @@ export const componentList: IItem[] = [
   {
     title: '按钮',
     component: 'a-button',
+    width: 200,
     slot: '默认按钮',
     componentProps: {
       type: 'primary'

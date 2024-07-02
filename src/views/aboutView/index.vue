@@ -65,7 +65,7 @@ import { VueDraggable } from 'vue-draggable-plus'
 import { v4 as uuidv4 } from 'uuid'
 import type { IItem, IListens, IItemContent } from './types'
 import { componentList } from './constant'
-
+import { cloneDeep } from 'lodash-es'
 const formState = reactive<Record<string, any>>({})
 const onFinish = (values: any) => {
   console.log('Success:', values)
@@ -114,27 +114,31 @@ function remove() {
 }
 const configList = ref<IItemContent[]>([])
 const setActive = (item: IItem) => {
-  const itemRef = ref(item)
-  const widthRef = toRef(itemRef.value.width!)
+  console.log(item)
   const res: IItemContent[] = []
-  res.push({
-    id: uuidv4(),
-    component: 'a-slider',
-    title: '宽度',
-    componentProps: {
-      value: widthRef,
-      min: 100,
-      max: 500
-    },
-    on: {
-      'update:value': (val: number) => {
-        itemRef.value.width = val
-        widthRef.value = val
+  if (item.width) {
+    const widthRef = toRef(item.width)
+    res.push({
+      id: uuidv4(),
+      component: 'a-slider',
+      title: '宽度',
+      componentProps: {
+        value: widthRef,
+        min: 100,
+        max: 500
+      },
+      on: {
+        'update:value': (val: number) => {
+          console.log(123, val)
+          item.width = val
+          widthRef.value = val
+        }
       }
-    }
-  })
+    })
+  }
+
   if (item.slot) {
-    const slotRef = toRef(itemRef.value.slot)
+    const slotRef = ref(item.slot)
     res.push({
       id: uuidv4(),
       component: 'a-input',
@@ -145,7 +149,7 @@ const setActive = (item: IItem) => {
       },
       on: {
         'update:value': (val: string) => {
-          itemRef.value.slot = val
+          item.slot = val
           slotRef.value = val
         }
       }
@@ -154,7 +158,7 @@ const setActive = (item: IItem) => {
   if (!item.componentProps) return
   const { placeholder, showCount } = item.componentProps
   if (placeholder) {
-    const placeholderRef = toRef(itemRef.value.componentProps!.placeholder)
+    const placeholderRef = toRef(item.componentProps!.placeholder)
     res.push({
       id: uuidv4(),
       component: 'a-input',
@@ -165,14 +169,14 @@ const setActive = (item: IItem) => {
       },
       on: {
         'update:value': (val: string) => {
-          itemRef.value.componentProps!.placeholder = val
+          item.componentProps!.placeholder = val
           placeholderRef.value = val
         }
       }
     })
   }
   if (showCount) {
-    const showCountRef = toRef(itemRef.value.componentProps!.showCount)
+    const showCountRef = toRef(item.componentProps!.showCount)
     res.push({
       id: uuidv4(),
       component: 'a-checkbox',
@@ -182,7 +186,7 @@ const setActive = (item: IItem) => {
       },
       on: {
         'update:checked': (val: boolean) => {
-          itemRef.value.componentProps!.showCount = val
+          item.componentProps!.showCount = val
           showCountRef.value = val
         }
       }
@@ -210,8 +214,9 @@ const handleOn = (item: IItemContent): IItemContent => {
 }
 const schemas = ref<IItemContent[]>([])
 const addComponent = (item: IItem) => {
-  schemas.value.push(item as IItemContent)
-  setActive(item)
+  const cloneItem = cloneDeep(item)
+  schemas.value.push(cloneItem as IItemContent)
+  setActive(cloneItem)
   onAdd()
 }
 </script>
