@@ -20,27 +20,35 @@
       </VueDraggable>
     </div>
     <div class="right flex-1">
-      <VueDraggable
-        class="flex flex-col gap-2 p-4 h-300px m-auto bg-gray-500/5 rounded overflow-auto"
-        v-model="list2"
-        :animation="150"
-        group="people"
-        ghostClass="ghost"
-        @update="onUpdate"
-        @add="onAdd"
-        @remove="remove"
+      <a-form
+        :model="formState"
+        :label-col="{ span: 8 }"
+        :wrapper-col="{ span: 16 }"
+        autocomplete="off"
+        @finish="onFinish"
       >
-        <component
-          :is="item.component"
-          v-for="item in list2"
-          :key="item.id"
-          :style="item.width ? { width: item.width + 'px' } : {}"
-          v-bind="item.componentProps"
-          @click="setActive(item)"
+        <VueDraggable
+          class="flex flex-col gap-2 p-4 h-300px m-auto bg-gray-500/5 rounded overflow-auto"
+          v-model="schemas"
+          :animation="150"
+          group="people"
+          ghostClass="ghost"
+          @update="onUpdate"
+          @add="onAdd"
+          @remove="remove"
         >
-          {{ item.slot }}
-        </component>
-      </VueDraggable>
+          <a-form-item :label="item.title" :name="item.id" v-for="item in schemas" :key="item.id">
+            <component
+              :is="item.component"
+              :style="item.width ? { width: item.width + 'px' } : {}"
+              v-bind="item.componentProps"
+              @click="setActive(item)"
+            >
+              {{ item.slot }}
+            </component>
+          </a-form-item>
+        </VueDraggable>
+      </a-form>
     </div>
     <div class="config w-60 p-4">
       <!-- <h1>表单</h1> -->
@@ -55,30 +63,54 @@
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus'
 import { v4 as uuidv4 } from 'uuid'
+import type { IItem, IListens, IItemContent } from './types'
+import { componentList } from './constant'
+
+const formState = reactive<Record<string, any>>({})
+const onFinish = (values: any) => {
+  console.log('Success:', values)
+}
 function onUpdate() {
   console.log('update')
 }
 function onAdd() {
   console.log('add')
-  list2.value.forEach((item) => {
+  schemas.value.forEach((item, index) => {
     if (!item.id) {
-      item.id = uuidv4() // Generate a unique ID
+      const id = uuidv4()
+      const itemContent = {
+        ...item,
+        id,
+        componentProps: {
+          ...item.componentProps
+        }
+      }
+      if (item.component === 'a-switch') {
+        const valRef = ref(false)
+        itemContent.componentProps.checked = valRef
+        itemContent.on = {
+          'update:checked': (val: boolean) => {
+            valRef.value = val
+            formState[id] = val
+          }
+        }
+      } else {
+        const valRef = ref('')
+        itemContent.componentProps.value = valRef
+        itemContent.on = {
+          'update:value': (val: string) => {
+            valRef.value = val
+            formState[id] = val
+          }
+        }
+      }
+      const component = handleOn(itemContent)
+      schemas.value[index] = component
     }
   })
 }
 function remove() {
   console.log('remove')
-}
-type IItem = {
-  title: string
-  component: string
-  width?: number
-  slot?: string
-  componentProps?: Record<string, any>
-  on?: Record<string, (...any: any[]) => void>
-}
-type IItemContent = IItem & {
-  id: string
 }
 const configList = ref<IItemContent[]>([])
 const setActive = (item: IItem) => {
@@ -157,68 +189,30 @@ const setActive = (item: IItem) => {
     })
   }
 
-  configList.value = handleOn(res)
+  configList.value = res.map((item) => handleOn(item))
   console.log(configList.value)
 }
-const handleOn = (list: IItemContent[]): IItemContent[] => {
-  return list.map((item) => {
-    const { componentProps = {}, on = {} } = item
-    const listens = Object.keys(on).reduce(
-      (pre, key) => {
-        const value = on[key]
-        const props = `on${key.slice(0, 1).toUpperCase()}${key.slice(1)}`
-        pre[props] = value
-        return pre
-      },
-      {} as Record<string, any>
-    )
-    return {
-      ...item,
-      componentProps: {
-        ...componentProps,
-        ...listens
-      }
-    }
-  })
-}
-const componentList: IItem[] = [
-  {
-    title: '按钮',
-    component: 'a-button',
-    slot: '默认按钮',
-    // 组件宽度
-    width: 200,
+const handleOn = (item: IItemContent): IItemContent => {
+  const { componentProps = {}, on = {} } = item
+  const listens = Object.keys(on).reduce((pre, key) => {
+    const value = on[key]
+    const props = `on${key.slice(0, 1).toUpperCase()}${key.slice(1)}`
+    pre[props] = value
+    return pre
+  }, {} as IListens)
+  return {
+    ...item,
     componentProps: {
-      type: 'primary'
-    }
-    //     // 是否隐藏
-    //     hidden: false,
-    // // 组件显隐规则
-    // hiddenRules: [],
-    // // 是否必选
-    // required: false,
-    // // 必选提示
-    // message: "数据缺失",
-    // // 组件校验规则
-    // validateRules: []
-  },
-  {
-    title: '输入框',
-    component: 'a-input',
-    // 组件宽度
-    width: 200,
-    componentProps: {
-      placeholder: '请输入内容',
-      // value: '1234',
-      showCount: true
+      ...componentProps,
+      ...listens
     }
   }
-]
-const list2 = ref<IItemContent[]>([])
+}
+const schemas = ref<IItemContent[]>([])
 const addComponent = (item: IItem) => {
-  const itemContent = { ...item, id: uuidv4() }
-  list2.value.push(itemContent)
-  setActive(itemContent)
+  schemas.value.push(item as IItemContent)
+  setActive(item)
+  onAdd()
 }
 </script>
 <style lang="scss" scoped></style>
