@@ -1,8 +1,8 @@
 <template>
-  <div class="flex">
+  <div class="flex h-screen">
     <div class="left">
       <VueDraggable
-        class="flex flex-col gap-2 p-4 w-300px h-300px m-auto bg-gray-500/5 rounded overflow-auto"
+        class="flex flex-col gap-2 p-4 w-300px h-full m-auto bg-gray-500/5 rounded overflow-auto"
         v-model="componentList"
         :animation="150"
         ghostClass="ghost"
@@ -21,30 +21,38 @@
       </VueDraggable>
     </div>
     <div class="right flex-1">
-      <a-form :model="formState" v-bind="formProps" autocomplete="off" @finish="onFinish">
+      <a-form
+        :model="formState"
+        v-bind="formProps"
+        autocomplete="off"
+        @finish="onFinish"
+        class="p-4 h-full m-auto bg-gray-500/5 overflow-auto"
+      >
         <VueDraggable
-          class="flex flex-col gap-2 p-4 h-300px m-auto bg-gray-500/5 rounded overflow-auto"
+          class="flex flex-col gap-2 h-full"
           v-model="schemas"
           :animation="150"
           group="people"
           ghostClass="ghost"
         >
-          <a-col :span="item.span" v-for="item in schemas" :key="item.id">
-            <a-form-item :label="item.title" :name="item.id">
-              <component
-                :is="item.component"
-                :style="item.width ? { width: item.width + 'px' } : {}"
-                v-bind="item.componentProps"
-                @click="compileConfigList(item)"
-              >
-                {{ item.slot }}
-              </component>
-            </a-form-item>
-          </a-col>
+          <a-row v-for="item in schemas" :key="item.id">
+            <a-col :span="item.span">
+              <a-form-item class="bg-gray-500/5" :label="item.title" :name="item.id">
+                <component
+                  :is="item.component"
+                  :style="item.width ? { width: item.width + 'px' } : {}"
+                  v-bind="item.componentProps"
+                  @click="compileConfigList(item)"
+                >
+                  {{ item.slot }}
+                </component>
+              </a-form-item>
+            </a-col>
+          </a-row>
         </VueDraggable>
       </a-form>
     </div>
-    <div class="config w-60 p-4">
+    <div class="config w-60 p-4 h-full overflow-auto">
       <a-tabs v-model:activeKey="activeKey">
         <a-tab-pane key="1" tab="表单">
           <div v-for="item in formConfigList" :key="item.id">
@@ -268,7 +276,7 @@ const getItemContent = (item: IItem): IItemContent => {
   const itemContent = {
     ...itemClone,
     id,
-    span: 12,
+    span: 24,
     componentProps: {
       ...(item.componentProps || {})
     }
