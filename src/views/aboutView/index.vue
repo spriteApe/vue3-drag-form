@@ -6,6 +6,7 @@
         v-model="componentList"
         :animation="150"
         ghostClass="ghost"
+        :clone="clone"
         :sort="false"
         :group="{ name: 'people', pull: 'clone', put: false }"
       >
@@ -20,29 +21,20 @@
       </VueDraggable>
     </div>
     <div class="right flex-1">
-      <a-form
-        :model="formState"
-        :label-col="{ span: 8 }"
-        :wrapper-col="{ span: 16 }"
-        autocomplete="off"
-        @finish="onFinish"
-      >
+      <a-form :model="formState" v-bind="formProps" autocomplete="off" @finish="onFinish">
         <VueDraggable
           class="flex flex-col gap-2 p-4 h-300px m-auto bg-gray-500/5 rounded overflow-auto"
           v-model="schemas"
           :animation="150"
           group="people"
           ghostClass="ghost"
-          @update="onUpdate"
-          @add="onAdd"
-          @remove="remove"
         >
           <a-form-item :label="item.title" :name="item.id" v-for="item in schemas" :key="item.id">
             <component
               :is="item.component"
               :style="item.width ? { width: item.width + 'px' } : {}"
               v-bind="item.componentProps"
-              @click="setActive(item)"
+              @click="compileConfigList(item)"
             >
               {{ item.slot }}
             </component>
@@ -51,36 +43,109 @@
       </a-form>
     </div>
     <div class="config w-60 p-4">
-      <!-- <h1>表单</h1> -->
-      <h1>组件</h1>
-      <div v-for="item in configList" :key="item.id">
-        {{ item.title }}:
-        <component :is="item.component" v-bind="item.componentProps" />
-      </div>
+      <a-tabs v-model:activeKey="activeKey">
+        <a-tab-pane key="1" tab="表单">
+          <div v-for="item in formConfigList" :key="item.id">
+            {{ item.title }}: <component :is="item.component" v-bind="item.componentProps" /></div
+        ></a-tab-pane>
+        <a-tab-pane key="2" tab="组件">
+          <div v-for="item in configList" :key="item.id">
+            {{ item.title }}:
+            <component :is="item.component" v-bind="item.componentProps" />
+          </div>
+        </a-tab-pane>
+      </a-tabs>
     </div>
   </div>
 </template>
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus'
 import { v4 as uuidv4 } from 'uuid'
-import type { IItem, IListens, IItemContent } from './types'
+import type { IItem, IItemContent } from './types'
 import { componentList } from './constant'
 import { cloneDeep } from 'lodash-es'
+import { handleOn } from '@/utils'
+const activeKey = ref('1')
 const formState = reactive<Record<string, any>>({})
 const onFinish = (values: any) => {
   console.log('Success:', values)
 }
-function onUpdate() {
-  console.log('update')
+const formProps = reactive({
+  labelCol: { span: 8 },
+  wrapperCol: { span: 16 },
+  layout: 'horizontal'
+})
+const formConfigList = ref<IItemContent[]>([])
+const compileFormConfigList = () => {
+  const res: IItemContent[] = []
+  const labelCol = ref(formProps.labelCol.span)
+  res.push({
+    id: uuidv4(),
+    component: 'a-slider',
+    title: 'labelCol',
+    componentProps: {
+      value: labelCol,
+      min: 1,
+      max: 24
+    },
+    on: {
+      'update:value': (val: number) => {
+        labelCol.value = val
+        formProps.labelCol.span = val
+      }
+    }
+  })
+  const wrapperCol = ref(formProps.wrapperCol.span)
+  res.push({
+    id: uuidv4(),
+    component: 'a-slider',
+    title: 'wrapperCol',
+    componentProps: {
+      value: wrapperCol,
+      min: 1,
+      max: 24
+    },
+    on: {
+      'update:value': (val: number) => {
+        wrapperCol.value = val
+        formProps.wrapperCol.span = val
+      }
+    }
+  })
+  const layout = ref(formProps.layout)
+  res.push({
+    id: uuidv4(),
+    component: 'a-select',
+    title: 'layout',
+    componentProps: {
+      value: layout,
+      options: [
+        {
+          value: 'horizontal',
+          label: 'horizontal'
+        },
+        {
+          value: 'vertical',
+          label: 'vertical'
+        },
+        {
+          value: 'inline',
+          label: 'inline'
+        }
+      ]
+    },
+    on: {
+      'update:value': (val: string) => {
+        layout.value = val
+        formProps.layout = val
+      }
+    }
+  })
+  formConfigList.value = res.map((item) => handleOn(item))
 }
-function onAdd() {
-  console.log('add')
-}
-function remove() {
-  console.log('remove')
-}
+compileFormConfigList()
 const configList = ref<IItemContent[]>([])
-const setActive = (item: IItem) => {
+const compileConfigList = (item: IItem) => {
   const res: IItemContent[] = []
   const titleRef = ref(item.title)
   res.push({
@@ -176,22 +241,6 @@ const setActive = (item: IItem) => {
 
   configList.value = res.map((item) => handleOn(item))
 }
-const handleOn = (item: IItemContent): IItemContent => {
-  const { componentProps = {}, on = {} } = item
-  const listens = Object.keys(on).reduce((pre, key) => {
-    const value = on[key]
-    const props = `on${key.slice(0, 1).toUpperCase()}${key.slice(1)}`
-    pre[props] = value
-    return pre
-  }, {} as IListens)
-  return {
-    ...item,
-    componentProps: {
-      ...componentProps,
-      ...listens
-    }
-  }
-}
 const schemas = ref<IItemContent[]>([])
 const getItemContent = (item: IItem): IItemContent => {
   const itemClone = cloneDeep(item)
@@ -224,10 +273,17 @@ const getItemContent = (item: IItem): IItemContent => {
   }
   return handleOn(itemContent)
 }
+function clone(element: IItem) {
+  const itemContent = reactive(getItemContent(element))
+  compileConfigList(itemContent)
+  activeKey.value = '2'
+  return itemContent
+}
 const addComponent = (item: IItem) => {
   const itemContent = reactive(getItemContent(item))
+  compileConfigList(itemContent)
+  activeKey.value = '2'
   schemas.value.push(itemContent)
-  setActive(itemContent)
 }
 </script>
 <style lang="scss" scoped></style>
