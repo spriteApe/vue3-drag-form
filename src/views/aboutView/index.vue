@@ -29,16 +29,18 @@
           group="people"
           ghostClass="ghost"
         >
-          <a-form-item :label="item.title" :name="item.id" v-for="item in schemas" :key="item.id">
-            <component
-              :is="item.component"
-              :style="item.width ? { width: item.width + 'px' } : {}"
-              v-bind="item.componentProps"
-              @click="compileConfigList(item)"
-            >
-              {{ item.slot }}
-            </component>
-          </a-form-item>
+          <a-col :span="item.span" v-for="item in schemas" :key="item.id">
+            <a-form-item :label="item.title" :name="item.id">
+              <component
+                :is="item.component"
+                :style="item.width ? { width: item.width + 'px' } : {}"
+                v-bind="item.componentProps"
+                @click="compileConfigList(item)"
+              >
+                {{ item.slot }}
+              </component>
+            </a-form-item>
+          </a-col>
         </VueDraggable>
       </a-form>
     </div>
@@ -75,9 +77,10 @@ const formProps = reactive({
   wrapperCol: { span: 16 },
   layout: 'horizontal'
 })
-const formConfigList = ref<IItemContent[]>([])
+type IConfigList = Omit<IItemContent, 'span'>
+const formConfigList = ref<IConfigList[]>([])
 const compileFormConfigList = () => {
-  const res: IItemContent[] = []
+  const res: IConfigList[] = []
   const labelCol = ref(formProps.labelCol.span)
   res.push({
     id: uuidv4(),
@@ -141,12 +144,12 @@ const compileFormConfigList = () => {
       }
     }
   })
-  formConfigList.value = res.map((item) => handleOn(item))
+  formConfigList.value = res.map((item) => handleOn(item) as IConfigList)
 }
 compileFormConfigList()
-const configList = ref<IItemContent[]>([])
-const compileConfigList = (item: IItem) => {
-  const res: IItemContent[] = []
+const configList = ref<IConfigList[]>([])
+const compileConfigList = (item: IItemContent) => {
+  const res: IConfigList[] = []
   const titleRef = ref(item.title)
   res.push({
     id: uuidv4(),
@@ -160,6 +163,23 @@ const compileConfigList = (item: IItem) => {
       'update:value': (val: string) => {
         item.title = val
         titleRef.value = val
+      }
+    }
+  })
+  const spanRef = ref(item.span)
+  res.push({
+    id: uuidv4(),
+    component: 'a-slider',
+    title: '栅格',
+    componentProps: {
+      value: spanRef,
+      min: 1,
+      max: 24
+    },
+    on: {
+      'update:value': (val: number) => {
+        item.span = val
+        spanRef.value = val
       }
     }
   })
@@ -239,7 +259,7 @@ const compileConfigList = (item: IItem) => {
     })
   }
 
-  configList.value = res.map((item) => handleOn(item))
+  configList.value = res.map((item) => handleOn(item) as IConfigList)
 }
 const schemas = ref<IItemContent[]>([])
 const getItemContent = (item: IItem): IItemContent => {
@@ -248,6 +268,7 @@ const getItemContent = (item: IItem): IItemContent => {
   const itemContent = {
     ...itemClone,
     id,
+    span: 12,
     componentProps: {
       ...(item.componentProps || {})
     }
@@ -271,7 +292,7 @@ const getItemContent = (item: IItem): IItemContent => {
       }
     }
   }
-  return handleOn(itemContent)
+  return handleOn(itemContent) as IItemContent
 }
 function clone(element: IItem) {
   const itemContent = reactive(getItemContent(element))

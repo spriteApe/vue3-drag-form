@@ -1,5 +1,5 @@
-import type { IListens, IItemContent } from '@/views/aboutView/types'
-export const handleOn = (item: IItemContent): IItemContent => {
+import type { IListens, IItem } from '@/views/aboutView/types'
+export const handleOn = (item: IItem) => {
   const { componentProps = {}, on = {} } = item
   const listens = Object.keys(on).reduce((pre, key) => {
     const value = on[key]

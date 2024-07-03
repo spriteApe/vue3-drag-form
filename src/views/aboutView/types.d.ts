@@ -9,4 +9,5 @@ export type IItem = {
 }
 export type IItemContent = IItem & {
   id: string
+  span: number
 }
