@@ -75,49 +75,31 @@ function onUpdate() {
 }
 function onAdd() {
   console.log('add')
-  schemas.value.forEach((item, index) => {
-    if (!item.id) {
-      const id = uuidv4()
-      const itemContent = {
-        ...item,
-        id,
-        componentProps: {
-          ...item.componentProps
-        }
-      }
-      if (item.component === 'a-switch') {
-        const valRef = ref(false)
-        itemContent.componentProps.checked = valRef
-        itemContent.on = {
-          'update:checked': (val: boolean) => {
-            valRef.value = val
-            formState[id] = val
-          }
-        }
-      } else {
-        const valRef = ref('')
-        itemContent.componentProps.value = valRef
-        itemContent.on = {
-          'update:value': (val: string) => {
-            valRef.value = val
-            formState[id] = val
-          }
-        }
-      }
-      const component = handleOn(itemContent)
-      schemas.value[index] = component
-    }
-  })
 }
 function remove() {
   console.log('remove')
 }
 const configList = ref<IItemContent[]>([])
 const setActive = (item: IItem) => {
-  console.log(item)
   const res: IItemContent[] = []
+  const titleRef = ref(item.title)
+  res.push({
+    id: uuidv4(),
+    component: 'a-input',
+    title: '标题',
+    componentProps: {
+      placeholder: '请输入',
+      value: titleRef
+    },
+    on: {
+      'update:value': (val: string) => {
+        item.title = val
+        titleRef.value = val
+      }
+    }
+  })
   if (item.width) {
-    const widthRef = toRef(item.width)
+    const widthRef = ref(item.width)
     res.push({
       id: uuidv4(),
       component: 'a-slider',
@@ -129,7 +111,6 @@ const setActive = (item: IItem) => {
       },
       on: {
         'update:value': (val: number) => {
-          console.log(123, val)
           item.width = val
           widthRef.value = val
         }
@@ -158,7 +139,7 @@ const setActive = (item: IItem) => {
   if (!item.componentProps) return
   const { placeholder, showCount } = item.componentProps
   if (placeholder) {
-    const placeholderRef = toRef(item.componentProps!.placeholder)
+    const placeholderRef = ref(item.componentProps!.placeholder)
     res.push({
       id: uuidv4(),
       component: 'a-input',
@@ -176,7 +157,7 @@ const setActive = (item: IItem) => {
     })
   }
   if (showCount) {
-    const showCountRef = toRef(item.componentProps!.showCount)
+    const showCountRef = ref(item.componentProps!.showCount)
     res.push({
       id: uuidv4(),
       component: 'a-checkbox',
@@ -194,7 +175,6 @@ const setActive = (item: IItem) => {
   }
 
   configList.value = res.map((item) => handleOn(item))
-  console.log(configList.value)
 }
 const handleOn = (item: IItemContent): IItemContent => {
   const { componentProps = {}, on = {} } = item
@@ -213,11 +193,41 @@ const handleOn = (item: IItemContent): IItemContent => {
   }
 }
 const schemas = ref<IItemContent[]>([])
+const getItemContent = (item: IItem): IItemContent => {
+  const itemClone = cloneDeep(item)
+  const id = uuidv4()
+  const itemContent = {
+    ...itemClone,
+    id,
+    componentProps: {
+      ...(item.componentProps || {})
+    }
+  }
+  if (item.component === 'a-switch') {
+    const valRef = ref(false)
+    itemContent.componentProps.checked = valRef
+    itemContent.on = {
+      'update:checked': (val: boolean) => {
+        formState[id] = val
+        valRef.value = val
+      }
+    }
+  } else {
+    const valRef = ref(undefined)
+    itemContent.componentProps.value = valRef
+    itemContent.on = {
+      'update:value': (val: any) => {
+        formState[id] = val
+        valRef.value = val
+      }
+    }
+  }
+  return handleOn(itemContent)
+}
 const addComponent = (item: IItem) => {
-  const cloneItem = cloneDeep(item)
-  schemas.value.push(cloneItem as IItemContent)
-  setActive(cloneItem)
-  onAdd()
+  const itemContent = reactive(getItemContent(item))
+  schemas.value.push(itemContent)
+  setActive(itemContent)
 }
 </script>
 <style lang="scss" scoped></style>
