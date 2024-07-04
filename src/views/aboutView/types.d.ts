@@ -11,3 +11,12 @@ export type IItemContent = IItem & {
   id: string
   span: number
 }
+export type IConfigList = Omit<IItemContent, 'span'>
+export type IFormLayout = 'horizontal' | 'vertical' | 'inline'
+
+export interface IFormProps {
+  labelCol: { span: number }
+  wrapperCol: { span: number }
+  layout: IFormLayout
+}
+export type IFormState = Record<string, any>
