@@ -13,16 +13,14 @@
   </a-tabs>
 </template>
 <script lang="ts" setup>
-import { compileConfigList } from '../utils'
-import { useCompileFormConfigList, useInjectFormProps } from '../hooks'
-import type { IConfigList } from '../types'
+import { useCompileFormConfigList, useInjectFormProps, useCompileConfigList } from '../hooks'
 import { emitter } from '../mitt'
 const activeKey = ref('1')
 const formProps = useInjectFormProps()
 const formConfigList = useCompileFormConfigList(formProps)
-const configList = ref<IConfigList[]>([])
+const { configList, updateConfigList } = useCompileConfigList()
 emitter.on('update:configList', (res) => {
-  configList.value = compileConfigList(res) as IConfigList[]
+  updateConfigList(res)
   activeKey.value = '2'
 })
 </script>

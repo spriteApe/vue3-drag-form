@@ -1,7 +1,6 @@
 import mitt, { type Emitter } from 'mitt'
 import type { IItemContent } from './types'
 type Events = {
-  foo: string
   'update:configList': IItemContent
 }
 

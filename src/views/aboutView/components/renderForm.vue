@@ -20,7 +20,7 @@
               :is="item.component"
               :style="item.width ? { width: item.width + 'px' } : {}"
               v-bind="item.componentProps"
-              @click="compileConfigList(item)"
+              @click="updateConfigList(item)"
             >
               {{ item.slot }}
             </component>
@@ -32,8 +32,13 @@
 </template>
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus'
-import { compileConfigList } from '../utils'
-import { useInjectFormState, useInjectSchemas, useInjectFormProps } from '../hooks'
+import {
+  useInjectFormState,
+  useInjectSchemas,
+  useInjectFormProps,
+  useCompileConfigList
+} from '../hooks'
+const { updateConfigList } = useCompileConfigList()
 const formState = useInjectFormState()
 const schemas = useInjectSchemas()
 const formProps = useInjectFormProps()
