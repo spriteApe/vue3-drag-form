@@ -6,16 +6,16 @@
     @finish="onFinish"
     class="p-4 h-full m-auto bg-gray-500/5 overflow-auto"
   >
-    <VueDraggable
-      class="flex flex-col gap-2 h-full"
-      v-model="schemas"
-      :animation="150"
-      group="people"
-      ghostClass="ghost"
-    >
-      <editComponent v-for="item in schemas" :key="item.id" :item>
-        <a-row>
-          <a-col :span="item.span">
+    <a-row>
+      <VueDraggable
+        v-model="schemas"
+        :animation="150"
+        group="people"
+        ghostClass="ghost"
+        class="w-full flex flex-wrap"
+      >
+        <a-col :span="item.span" v-for="item in schemas" :key="item.id">
+          <editComponent :item>
             <a-form-item class="bg-gray-500/5" :label="item.title" :name="item.id">
               <component
                 :is="item.component"
@@ -25,10 +25,10 @@
                 {{ item.slot }}
               </component>
             </a-form-item>
-          </a-col>
-        </a-row>
-      </editComponent>
-    </VueDraggable>
+          </editComponent>
+        </a-col>
+      </VueDraggable>
+    </a-row>
   </a-form>
 </template>
 <script lang="ts" setup>
