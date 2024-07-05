@@ -13,6 +13,7 @@ export type IItemContent = IItem & {
 }
 export type IConfigList = Omit<IItemContent, 'span'>
 export type IFormLayout = 'horizontal' | 'vertical' | 'inline'
+export type IActiveComponent = IItemContent | null
 
 export interface IFormProps {
   labelCol: { span: number }

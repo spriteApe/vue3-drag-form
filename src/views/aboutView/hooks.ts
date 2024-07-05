@@ -1,6 +1,14 @@
 import { handleOn, getInitFormProps } from './utils'
 import { v4 as uuidv4 } from 'uuid'
-import type { IConfigList, IFormProps, IFormState, IItemContent, IItem } from './types'
+import { cloneDeep } from 'lodash-es'
+import type {
+  IConfigList,
+  IFormProps,
+  IFormState,
+  IItemContent,
+  IItem,
+  IActiveComponent
+} from './types'
 import type { Ref } from 'vue'
 const getModelKey = (component: string) => {
   if (['checkbox', 'switch'].includes(component)) {
@@ -26,7 +34,6 @@ function toNestedRef(obj: Record<string, any>, path: string) {
   return nestedRef
 }
 const getComponent = (option: IItem, obj: Record<string, any>, key: string) => {
-  // const dataRef = toRef(obj, key)
   const dataRef = toNestedRef(obj, key)
   const { component, componentProps = {}, on = {} } = option
   const modelKey = getModelKey(component)
@@ -107,8 +114,8 @@ export const useCompileFormConfigList = (formProps: IFormProps) => {
 export const useCompileConfigList = () => {
   const configList = ref<IConfigList[]>([])
 
-  const updateConfigList = (item: IItemContent) => {
-    console.log('updateConfigList', item)
+  const updateConfigList = (item?: IItemContent) => {
+    if (!item) return (configList.value = [])
     const res: IConfigList[] = []
     const titleComponent = getComponent(
       {
@@ -134,7 +141,7 @@ export const useCompileConfigList = () => {
       'span'
     )
     res.push(titleComponent, gridComponent)
-    if (item.width) {
+    if (item.width !== undefined) {
       const widthComponent = getComponent(
         {
           component: 'slider',
@@ -150,7 +157,7 @@ export const useCompileConfigList = () => {
       res.push(widthComponent)
     }
 
-    if (item.slot) {
+    if (item.slot !== undefined) {
       const slotComponent = getComponent(
         {
           component: 'input',
@@ -163,7 +170,7 @@ export const useCompileConfigList = () => {
     }
     if (!item.componentProps) return
     const { placeholder, showCount } = item.componentProps
-    if (placeholder) {
+    if (placeholder !== undefined) {
       const placeholderComponent = getComponent(
         {
           component: 'input',
@@ -177,7 +184,7 @@ export const useCompileConfigList = () => {
       )
       res.push(placeholderComponent)
     }
-    if (showCount) {
+    if (showCount !== undefined) {
       const numberComponent = getComponent(
         {
           component: 'checkbox',
@@ -217,4 +224,42 @@ export const useProvideSchemas = (data: ISchemasRef) => {
 }
 export const useInjectSchemas = (data: ISchemasRef = ref([])) => {
   return inject(schemasKey, data) ?? data
+}
+
+const activeComponentKey = Symbol('activeComponent')
+type IActiveComponentKeyRef = Ref<IActiveComponent>
+export const useProvideActiveComponent = (data: IActiveComponentKeyRef) => {
+  provide(activeComponentKey, data)
+}
+export const useInjectActiveComponent = (data: IActiveComponentKeyRef = ref(null)) => {
+  return inject(activeComponentKey, data) ?? data
+}
+
+export const useItemContent = (item: IItem, formState: IFormState): IItemContent => {
+  const itemClone = cloneDeep(item)
+  const { component, componentProps = {}, on = {} } = itemClone
+  const id = uuidv4()
+  const modelKey = getModelKey(component)
+  const valRef = ref(undefined)
+  const updateModelKey = 'update:' + modelKey
+  const itemContent = {
+    ...itemClone,
+    id,
+    span: 24,
+    componentProps: {
+      ...componentProps,
+      updateModelKey: valRef
+    },
+    on: {
+      ...on,
+      [updateModelKey]: (val: any) => {
+        formState[id] = val
+        valRef.value = val
+        if (itemClone.on?.[updateModelKey]) {
+          itemClone.on[updateModelKey](val)
+        }
+      }
+    }
+  }
+  return reactive(handleOn(itemContent) as IItemContent)
 }

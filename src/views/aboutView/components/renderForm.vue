@@ -13,31 +13,28 @@
       group="people"
       ghostClass="ghost"
     >
-      <a-row v-for="item in schemas" :key="item.id">
-        <a-col :span="item.span">
-          <a-form-item class="bg-gray-500/5" :label="item.title" :name="item.id">
-            <component
-              :is="item.component"
-              :style="item.width ? { width: item.width + 'px' } : {}"
-              v-bind="item.componentProps"
-              @click="updateConfigList(item)"
-            >
-              {{ item.slot }}
-            </component>
-          </a-form-item>
-        </a-col>
-      </a-row>
+      <editComponent v-for="item in schemas" :key="item.id" :item>
+        <a-row>
+          <a-col :span="item.span">
+            <a-form-item class="bg-gray-500/5" :label="item.title" :name="item.id">
+              <component
+                :is="item.component"
+                :style="item.width ? { width: item.width + 'px' } : {}"
+                v-bind="item.componentProps"
+              >
+                {{ item.slot }}
+              </component>
+            </a-form-item>
+          </a-col>
+        </a-row>
+      </editComponent>
     </VueDraggable>
   </a-form>
 </template>
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus'
 import { useInjectFormState, useInjectSchemas, useInjectFormProps } from '../hooks'
-import type { IItemContent } from '../types'
-import { emitter } from '../mitt'
-const updateConfigList = (item: IItemContent) => {
-  emitter.emit('update:configList', item)
-}
+import editComponent from './editComponent.vue'
 const formState = useInjectFormState()
 const schemas = useInjectSchemas()
 const formProps = useInjectFormProps()
