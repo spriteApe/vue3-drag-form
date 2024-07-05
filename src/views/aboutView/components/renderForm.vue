@@ -32,13 +32,12 @@
 </template>
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus'
-import {
-  useInjectFormState,
-  useInjectSchemas,
-  useInjectFormProps,
-  useCompileConfigList
-} from '../hooks'
-const { updateConfigList } = useCompileConfigList()
+import { useInjectFormState, useInjectSchemas, useInjectFormProps } from '../hooks'
+import type { IItemContent } from '../types'
+import { emitter } from '../mitt'
+const updateConfigList = (item: IItemContent) => {
+  emitter.emit('update:configList', item)
+}
 const formState = useInjectFormState()
 const schemas = useInjectSchemas()
 const formProps = useInjectFormProps()
