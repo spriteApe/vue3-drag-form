@@ -6,7 +6,7 @@
     @click="updateConfigList(item)"
   >
     <slot></slot>
-    <div class="absolute top-0 right-0 z-999" @click.stop v-show="activeVisible">
+    <div class="absolute top-0 left-0 z-999" @click.stop v-show="activeVisible">
       <CopyOutlined class="cursor-pointer mx-2" @click="copyItem" />
       <DeleteOutlined class="cursor-pointer mx-2" @click="deleteItem" />
     </div>

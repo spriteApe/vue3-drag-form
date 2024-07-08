@@ -1,5 +1,5 @@
 <template>
-  <a-modal v-model:open="open" title="预览表单" @ok="handleOk">
+  <a-modal v-model:open="open" title="预览表单" @ok="handleOk" @cancel="handleCancel">
     <renderForm ref="renderFormRef" />
   </a-modal>
 </template>
@@ -19,5 +19,8 @@ const handleOk = () => {
     console.log(res)
     open.value = false
   })
+}
+const handleCancel = () => {
+  renderFormRef.value!.formRef.resetFields()
 }
 </script>

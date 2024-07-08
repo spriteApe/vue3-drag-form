@@ -3,10 +3,14 @@
     <div class="left">
       <componentDictionary />
     </div>
-    <div class="right flex-1">
-      <a-button type="primary" @click="previewFormModalVisible = true">预览</a-button>
-      <previewFormModal v-model="previewFormModalVisible" />
-      <renderForm />
+    <div class="right flex-1 flex flex-col">
+      <div class="edit p-2">
+        <a-button type="primary" @click="previewFormModalVisible = true">预览</a-button>
+        <previewFormModal v-model="previewFormModalVisible" />
+      </div>
+      <div class="flex-1 h-0">
+        <renderForm />
+      </div>
     </div>
     <div class="config w-60 p-4 h-full overflow-auto">
       <optionConfig />
