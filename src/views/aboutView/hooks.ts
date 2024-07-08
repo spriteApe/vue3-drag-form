@@ -11,7 +11,7 @@ import type {
 } from './types'
 import type { Ref } from 'vue'
 const getModelKey = (component: string) => {
-  if (['checkbox', 'switch'].includes(component)) {
+  if (['checkbox', 'switch'].some((item) => component.includes(item))) {
     return 'checked'
   }
   return 'value'
@@ -257,7 +257,7 @@ export const useItemContent = (item: IItem, formState: IFormState): IItemContent
     span: 24,
     componentProps: {
       ...componentProps,
-      updateModelKey: valRef
+      [modelKey]: valRef
     },
     on: {
       ...on,
