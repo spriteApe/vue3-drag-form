@@ -140,7 +140,16 @@ export const useCompileConfigList = () => {
       item,
       'span'
     )
-    res.push(titleComponent, gridComponent)
+    item.required = item.required ?? false
+    const requiredComponent = getComponent(
+      {
+        component: 'switch',
+        title: '必填'
+      },
+      item,
+      'required'
+    )
+    res.push(titleComponent, gridComponent, requiredComponent)
     if (item.width !== undefined) {
       const widthComponent = getComponent(
         {
@@ -262,4 +271,12 @@ export const useItemContent = (item: IItem, formState: IFormState): IItemContent
     }
   }
   return reactive(handleOn(itemContent) as IItemContent)
+}
+
+const previewKey = Symbol('preview')
+export const useProvidePreview = (data: boolean) => {
+  provide(previewKey, data)
+}
+export const useInjectPreview = (data = false) => {
+  return inject(previewKey, data) ?? data
 }

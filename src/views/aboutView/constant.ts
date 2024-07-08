@@ -26,13 +26,13 @@ export const componentList: IItem[] = [
     slot: '默认按钮',
     componentProps: {
       type: 'primary'
-    }
+    },
     //     // 是否隐藏
     //     hidden: false,
     // // 组件显隐规则
     // hiddenRules: [],
     // // 是否必选
-    // required: false,
+    required: false
     // // 必选提示
     // message: "数据缺失",
     // // 组件校验规则
@@ -41,6 +41,7 @@ export const componentList: IItem[] = [
   {
     title: '输入框',
     component: 'a-input',
+    required: true,
     componentProps: {
       placeholder: '请输入内容',
       showCount: true

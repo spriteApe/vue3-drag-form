@@ -2,6 +2,8 @@
   <a-form
     :model="formState"
     v-bind="formProps"
+    :rules="formRules"
+    ref="formRef"
     autocomplete="off"
     @finish="onFinish"
     class="p-4 h-full m-auto bg-gray-500/5 overflow-auto"
@@ -11,12 +13,13 @@
         v-model="schemas"
         :animation="150"
         group="people"
+        :disabled="isPreview"
         ghostClass="ghost"
         class="w-full flex flex-wrap"
       >
         <a-col :span="item.span" v-for="item in schemas" :key="item.id">
           <editComponent :item>
-            <a-form-item class="bg-gray-500/5" :label="item.title" :name="item.id">
+            <a-form-item :label="item.title" :name="item.id">
               <component
                 :is="item.component"
                 :style="item.width ? { width: item.width + 'px' } : {}"
@@ -33,13 +36,36 @@
 </template>
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus'
-import { useInjectFormState, useInjectSchemas, useInjectFormProps } from '../hooks'
+import {
+  useInjectFormState,
+  useInjectSchemas,
+  useInjectFormProps,
+  useInjectPreview
+} from '../hooks'
 import editComponent from './editComponent.vue'
+import type { Rule } from 'ant-design-vue/es/form'
+import type { FormInstance } from 'ant-design-vue'
+const isPreview = useInjectPreview()
 const formState = useInjectFormState()
 const schemas = useInjectSchemas()
 const formProps = useInjectFormProps()
 const onFinish = (values: any) => {
   console.log('Success:', values)
 }
+const formRef = ref<FormInstance>()
+defineExpose({
+  formRef: formRef
+})
+const formRules = computed(() => {
+  return schemas.value.reduce(
+    (pre, cur) => {
+      if (!cur.required) return pre
+      const message = cur.componentProps?.placeholder ?? '请完善' + cur.title
+      pre[cur.id] = [{ message, required: cur.required, trigger: 'change' }]
+      return pre
+    },
+    {} as Record<string, Rule[]>
+  )
+})
 </script>
 <style lang="scss" scoped></style>

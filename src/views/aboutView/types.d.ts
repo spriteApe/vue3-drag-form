@@ -2,6 +2,7 @@ export type IListens = Record<string, (...any: any[]) => void>
 export type IItem = {
   title: string
   component: string
+  required?: boolean
   width?: number
   slot?: string
   componentProps?: Record<string, any>

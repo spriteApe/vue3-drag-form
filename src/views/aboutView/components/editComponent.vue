@@ -1,8 +1,9 @@
 <template>
   <div
     class="editComponent"
-    @click="updateConfigList(item)"
     :class="activeVisible ? 'editComponent--active' : ''"
+    v-if="!isPreview"
+    @click="updateConfigList(item)"
   >
     <slot></slot>
     <div class="absolute top-0 right-0 z-999" @click.stop v-show="activeVisible">
@@ -10,6 +11,7 @@
       <DeleteOutlined class="cursor-pointer mx-2" @click="deleteItem" />
     </div>
   </div>
+  <slot v-else></slot>
 </template>
 <script lang="ts" setup>
 import type { IItemContent } from '../types'
@@ -18,10 +20,11 @@ import {
   useInjectSchemas,
   useInjectActiveComponent,
   useInjectFormState,
-  useItemContent
+  useItemContent,
+  useInjectPreview
 } from '../hooks'
 import { CopyOutlined, DeleteOutlined } from '@ant-design/icons-vue'
-
+const isPreview = useInjectPreview()
 const activeComponent = useInjectActiveComponent()
 const schemas = useInjectSchemas()
 const props = defineProps<{
@@ -49,7 +52,7 @@ const deleteItem = () => {
 </script>
 <style lang="scss" scoped>
 .editComponent {
-  @apply relative;
+  @apply relative cursor-pointer h-full;
   &--active {
     border: 1px solid red;
   }

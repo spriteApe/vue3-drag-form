@@ -4,6 +4,8 @@
       <componentDictionary />
     </div>
     <div class="right flex-1">
+      <a-button type="primary" @click="previewFormModalVisible = true">预览</a-button>
+      <previewFormModal v-model="previewFormModalVisible" />
       <renderForm />
     </div>
     <div class="config w-60 p-4 h-full overflow-auto">
@@ -16,6 +18,7 @@ import type { IItemContent, IFormProps, IFormState, IActiveComponent } from './t
 import componentDictionary from './components/componentDictionary.vue'
 import renderForm from './components/renderForm.vue'
 import optionConfig from './components/optionConfig.vue'
+import previewFormModal from './components/previewFormModal.vue'
 import {
   useProvideFormState,
   useProvideFormProps,
@@ -31,5 +34,7 @@ useProvideFormState(formState)
 useProvideFormProps(formProps)
 useProvideSchemas(schemas)
 useProvideActiveComponent(activeComponent)
+
+const previewFormModalVisible = ref(false)
 </script>
 <style lang="scss" scoped></style>
