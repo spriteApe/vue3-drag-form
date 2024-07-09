@@ -234,7 +234,25 @@ export const useProvideSchemas = (data: ISchemasRef) => {
 export const useInjectSchemas = (data: ISchemasRef = ref([])) => {
   return inject(schemasKey, data) ?? data
 }
-
+export const usePreviewSchemas = (schemas: ISchemasRef, formState: IFormState) => {
+  const newSchemas = ref<IItemContent[]>([])
+  watch(
+    schemas,
+    (data) => {
+      newSchemas.value = data.map((item) => {
+        const { id } = item //保持原来的id
+        Reflect.deleteProperty(item, 'on') //相关的事件删除 避免影响最外层的formState
+        const itemContent = useGetItemContent(item, formState, id)
+        return itemContent
+      })
+    },
+    {
+      immediate: true,
+      deep: true
+    }
+  )
+  return newSchemas
+}
 const activeComponentKey = Symbol('activeComponent')
 type IActiveComponentKeyRef = Ref<IActiveComponent>
 export const useProvideActiveComponent = (data: IActiveComponentKeyRef) => {
@@ -243,13 +261,11 @@ export const useProvideActiveComponent = (data: IActiveComponentKeyRef) => {
 export const useInjectActiveComponent = (data: IActiveComponentKeyRef = ref(null)) => {
   return inject(activeComponentKey, data) ?? data
 }
-
-export const useItemContent = (item: IItem, formState: IFormState): IItemContent => {
+const useGetItemContent = (item: IItem, formState: IFormState, id: string): IItemContent => {
   const itemClone = cloneDeep(item)
   const { component, componentProps = {}, on = {} } = itemClone
-  const id = uuidv4()
   const modelKey = getModelKey(component)
-  const valRef = ref(undefined)
+  const valRef = toRef(formState, id)
   const updateModelKey = 'update:' + modelKey
   const itemContent = {
     ...itemClone,
@@ -262,7 +278,6 @@ export const useItemContent = (item: IItem, formState: IFormState): IItemContent
     on: {
       ...on,
       [updateModelKey]: (val: any) => {
-        formState[id] = val
         valRef.value = val
         if (itemClone.on?.[updateModelKey]) {
           itemClone.on[updateModelKey](val)
@@ -271,6 +286,9 @@ export const useItemContent = (item: IItem, formState: IFormState): IItemContent
     }
   }
   return reactive(handleOn(itemContent) as IItemContent)
+}
+export const useItemContent = (item: IItem, formState: IFormState): IItemContent => {
+  return useGetItemContent(item, formState, uuidv4())
 }
 
 const previewKey = Symbol('preview')

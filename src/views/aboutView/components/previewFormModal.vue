@@ -6,10 +6,19 @@
 <script lang="ts" setup>
 import renderForm from './renderForm.vue'
 import type { IFormState } from '../types'
-import { useProvideFormState, useProvidePreview } from '../hooks'
-// const formState = reactive<IFormState>({})
-// useProvideFormState(formState)
+import {
+  useProvideFormState,
+  useProvidePreview,
+  useInjectSchemas,
+  useProvideSchemas,
+  usePreviewSchemas
+} from '../hooks'
+const formState = reactive<IFormState>({})
+useProvideFormState(formState)
 useProvidePreview(true)
+const schemas = useInjectSchemas()
+const newSchemas = usePreviewSchemas(schemas, formState)
+useProvideSchemas(newSchemas)
 const open = defineModel<boolean>({
   required: true
 })
