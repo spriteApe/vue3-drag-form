@@ -31,6 +31,7 @@ const props = defineProps<{
   item: IItemContent
 }>()
 const updateConfigList = (item?: IItemContent) => {
+  if (activeComponent.value === item) return
   activeComponent.value = item ?? null
   emitter.emit('update:configList', item)
 }

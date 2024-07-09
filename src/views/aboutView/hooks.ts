@@ -1,4 +1,4 @@
-import { handleOn, getInitFormProps } from './utils'
+import { handleOn, getInitFormProps, getModelKey } from './utils'
 import { v4 as uuidv4 } from 'uuid'
 import { cloneDeep } from 'lodash-es'
 import type {
@@ -10,12 +10,6 @@ import type {
   IActiveComponent
 } from './types'
 import type { Ref } from 'vue'
-const getModelKey = (component: string) => {
-  if (['checkbox', 'switch'].some((item) => component.includes(item))) {
-    return 'checked'
-  }
-  return 'value'
-}
 
 function toNestedRef(obj: Record<string, any>, path: string) {
   const keys = path.split('.')
@@ -33,15 +27,17 @@ function toNestedRef(obj: Record<string, any>, path: string) {
   )
   return nestedRef
 }
-const getComponent = (option: IItem, obj: Record<string, any>, key: string) => {
+const getOption = <T extends IConfigList = IConfigList>(
+  option: T,
+  obj: Record<string, any>,
+  key: string
+): T => {
   const dataRef = toNestedRef(obj, key)
   const { component, componentProps = {}, on = {} } = option
   const modelKey = getModelKey(component)
   const updateModelKey = 'update:' + modelKey
   return {
     ...option,
-    id: uuidv4(),
-    component: 'a-' + component,
     componentProps: {
       ...componentProps,
       [modelKey]: dataRef
@@ -56,6 +52,18 @@ const getComponent = (option: IItem, obj: Record<string, any>, key: string) => {
       }
     }
   }
+}
+const getComponent = (option: IItem, obj: Record<string, any>, key: string) => {
+  const { component } = option
+  return getOption(
+    {
+      ...option,
+      id: uuidv4(),
+      component: 'a-' + component
+    },
+    obj,
+    key
+  )
 }
 export const useCompileFormConfigList = (formProps: IFormProps) => {
   const res: IConfigList[] = []
@@ -109,13 +117,16 @@ export const useCompileFormConfigList = (formProps: IFormProps) => {
   )
   res.push(widthComponent, wrapperColSpanComponent, layoutComponent)
 
-  return ref(res.map((item) => handleOn(item) as IConfigList))
+  return ref(res.map((item) => handleOn(item)))
 }
 export const useCompileConfigList = () => {
   const configList = ref<IConfigList[]>([])
 
   const updateConfigList = (item?: IItemContent) => {
-    if (!item) return (configList.value = [])
+    if (!item) {
+      configList.value = []
+      return
+    }
     const res: IConfigList[] = []
     const titleComponent = getComponent(
       {
@@ -127,6 +138,17 @@ export const useCompileConfigList = () => {
       },
       item,
       'title'
+    )
+    const idComponent = getComponent(
+      {
+        component: 'input',
+        title: '字段ID',
+        componentProps: {
+          placeholder: '请输入'
+        }
+      },
+      item,
+      'id'
     )
     const gridComponent = getComponent(
       {
@@ -149,7 +171,7 @@ export const useCompileConfigList = () => {
       item,
       'required'
     )
-    res.push(titleComponent, gridComponent, requiredComponent)
+    res.push(titleComponent, idComponent, gridComponent, requiredComponent)
     if (item.width !== undefined) {
       const widthComponent = getComponent(
         {
@@ -204,7 +226,7 @@ export const useCompileConfigList = () => {
       )
       res.push(numberComponent)
     }
-    configList.value = res.map((item) => handleOn(item)) as IConfigList[]
+    configList.value = res.map((item) => handleOn(item))
   }
   return {
     configList,
@@ -263,29 +285,16 @@ export const useInjectActiveComponent = (data: IActiveComponentKeyRef = ref(null
 }
 const useGetItemContent = (item: IItem, formState: IFormState, id: string): IItemContent => {
   const itemClone = cloneDeep(item)
-  const { component, componentProps = {}, on = {} } = itemClone
-  const modelKey = getModelKey(component)
-  const valRef = toRef(formState, id)
-  const updateModelKey = 'update:' + modelKey
-  const itemContent = {
-    ...itemClone,
-    id,
-    span: 24,
-    componentProps: {
-      ...componentProps,
-      [modelKey]: valRef
+  const itemContent = getOption(
+    {
+      ...itemClone,
+      id,
+      span: 24
     },
-    on: {
-      ...on,
-      [updateModelKey]: (val: any) => {
-        valRef.value = val
-        if (itemClone.on?.[updateModelKey]) {
-          itemClone.on[updateModelKey](val)
-        }
-      }
-    }
-  }
-  return reactive(handleOn(itemContent) as IItemContent)
+    formState,
+    id
+  )
+  return reactive(handleOn(itemContent))
 }
 export const useItemContent = (item: IItem, formState: IFormState): IItemContent => {
   return useGetItemContent(item, formState, uuidv4())

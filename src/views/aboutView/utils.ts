@@ -1,5 +1,5 @@
 import type { IListens, IItem, IFormProps } from './types'
-export const handleOn = (item: IItem) => {
+export const handleOn = <T extends IItem = IItem>(item: T): T => {
   const { componentProps = {}, on = {} } = item
   const listens = Object.keys(on).reduce((pre, key) => {
     const value = on[key]
@@ -21,3 +21,10 @@ export const getInitFormProps = (): IFormProps => ({
   wrapperCol: { span: 16 },
   layout: 'horizontal'
 })
+
+export const getModelKey = (component: string) => {
+  if (['checkbox', 'switch'].some((item) => component.includes(item))) {
+    return 'checked'
+  }
+  return 'value'
+}
