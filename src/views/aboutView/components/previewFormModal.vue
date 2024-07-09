@@ -13,6 +13,7 @@ import {
   useProvideSchemas,
   usePreviewSchemas
 } from '../hooks'
+import { message } from 'ant-design-vue'
 const formState = reactive<IFormState>({})
 useProvideFormState(formState)
 useProvidePreview(true)
@@ -26,6 +27,7 @@ const renderFormRef = ref()
 const handleOk = () => {
   renderFormRef.value!.formRef.validate().then((res: IFormState) => {
     console.log(res)
+    message.success('校验成功')
     open.value = false
   })
 }

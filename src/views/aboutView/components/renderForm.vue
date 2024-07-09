@@ -3,6 +3,7 @@
     :model="formState"
     v-bind="formProps"
     :rules="formRules"
+    :name="formName"
     ref="formRef"
     autocomplete="off"
     @finish="onFinish"
@@ -45,6 +46,7 @@ import {
 import editComponent from './editComponent.vue'
 import type { Rule } from 'ant-design-vue/es/form'
 import type { FormInstance } from 'ant-design-vue'
+import { v4 as uuidv4 } from 'uuid'
 const isPreview = useInjectPreview()
 const formState = useInjectFormState()
 const schemas = useInjectSchemas()
@@ -56,6 +58,7 @@ const formRef = ref<FormInstance>()
 defineExpose({
   formRef: formRef
 })
+const formName = 'formName' + uuidv4()
 const formRules = computed(() => {
   return schemas.value.reduce(
     (pre, cur) => {
