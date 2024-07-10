@@ -22,3 +22,7 @@ export interface IFormProps {
   layout: IFormLayout
 }
 export type IFormState = Record<string, any>
+export type IConfigOptions = {
+  options: IItem | IConfigList
+  path: string
+}

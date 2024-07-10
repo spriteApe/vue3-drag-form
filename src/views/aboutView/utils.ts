@@ -1,5 +1,6 @@
 import type { IListens, IItem, IFormProps } from './types'
-export const handleOn = <T extends IItem = IItem>(item: T): T => {
+import { omit } from 'lodash-es'
+export const handleOn = <T extends IItem = IItem>(item: T) => {
   const { componentProps = {}, on = {} } = item
   const listens = Object.keys(on).reduce((pre, key) => {
     const value = on[key]
@@ -8,12 +9,12 @@ export const handleOn = <T extends IItem = IItem>(item: T): T => {
     return pre
   }, {} as IListens)
   return {
-    ...item,
+    ...omit(item, 'on'),
     componentProps: {
       ...componentProps,
       ...listens
     }
-  }
+  } as T
 }
 
 export const getInitFormProps = (): IFormProps => ({

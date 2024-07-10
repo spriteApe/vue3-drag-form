@@ -1,18 +1,23 @@
 import { handleOn, getInitFormProps, getModelKey } from './utils'
 import { v4 as uuidv4 } from 'uuid'
-import { cloneDeep } from 'lodash-es'
+import { formConfigOptions, componentConfigOptions } from './constant'
+import { cloneDeep, get } from 'lodash-es'
 import type {
   IConfigList,
   IFormProps,
   IFormState,
   IItemContent,
   IItem,
-  IActiveComponent
+  IActiveComponent,
+  IConfigOptions
 } from './types'
 import type { Ref } from 'vue'
 
 function toNestedRef(obj: Record<string, any>, path: string) {
   const keys = path.split('.')
+  if (keys.length === 1) {
+    return toRef(obj, path)
+  }
   const lastKey = keys.pop()!
   const parent = keys.reduce((acc, key) => acc[key], obj)
   const nestedRef = ref(parent[lastKey])
@@ -53,72 +58,33 @@ const getOption = <T extends IConfigList = IConfigList>(
     }
   }
 }
-const getComponent = (option: IItem, obj: Record<string, any>, key: string) => {
-  const { component } = option
-  return getOption(
-    {
-      ...option,
-      id: uuidv4(),
-      component: 'a-' + component
-    },
-    obj,
-    key
-  )
+const handleConfigOptions = (
+  configOptions: IConfigOptions,
+  obj: Record<string, any>,
+  ignoreNull = true
+) => {
+  const { options, path } = configOptions
+  if (get(obj, path) === undefined && ignoreNull) return
+  const item = getOption(options as IConfigList, obj, path)
+  return handleOn(item)
+}
+const getComponent = (optionList: IConfigOptions[], obj: Record<string, any>) => {
+  return optionList
+    .map((item) =>
+      handleConfigOptions(
+        {
+          options: { ...item.options, id: uuidv4() },
+          path: item.path
+        },
+        obj
+      )
+    )
+    .filter(Boolean) as IConfigList[]
 }
 export const useCompileFormConfigList = (formProps: IFormProps) => {
-  const res: IConfigList[] = []
-  const widthComponent = getComponent(
-    {
-      component: 'slider',
-      title: '宽度',
-      componentProps: {
-        min: 1,
-        max: 24
-      }
-    },
-    formProps,
-    'labelCol.span'
-  )
-  const wrapperColSpanComponent = getComponent(
-    {
-      component: 'slider',
-      title: 'wrapperCol',
-      componentProps: {
-        min: 1,
-        max: 24
-      }
-    },
-    formProps,
-    'wrapperCol.span'
-  )
-  const layoutComponent = getComponent(
-    {
-      component: 'select',
-      title: 'layout',
-      componentProps: {
-        options: [
-          {
-            value: 'horizontal',
-            label: 'horizontal'
-          },
-          {
-            value: 'vertical',
-            label: 'vertical'
-          },
-          {
-            value: 'inline',
-            label: 'inline'
-          }
-        ]
-      }
-    },
-    formProps,
-    'layout'
-  )
-  res.push(widthComponent, wrapperColSpanComponent, layoutComponent)
-
-  return ref(res.map((item) => handleOn(item)))
+  return ref(getComponent(formConfigOptions, formProps))
 }
+
 export const useCompileConfigList = () => {
   const configList = ref<IConfigList[]>([])
 
@@ -127,106 +93,8 @@ export const useCompileConfigList = () => {
       configList.value = []
       return
     }
-    const res: IConfigList[] = []
-    const titleComponent = getComponent(
-      {
-        component: 'input',
-        title: '标题',
-        componentProps: {
-          placeholder: '请输入'
-        }
-      },
-      item,
-      'title'
-    )
-    const idComponent = getComponent(
-      {
-        component: 'input',
-        title: '字段ID',
-        componentProps: {
-          placeholder: '请输入'
-        }
-      },
-      item,
-      'id'
-    )
-    const gridComponent = getComponent(
-      {
-        component: 'slider',
-        title: '栅格',
-        componentProps: {
-          min: 1,
-          max: 24
-        }
-      },
-      item,
-      'span'
-    )
     item.required = item.required ?? false
-    const requiredComponent = getComponent(
-      {
-        component: 'switch',
-        title: '必填'
-      },
-      item,
-      'required'
-    )
-    res.push(titleComponent, idComponent, gridComponent, requiredComponent)
-    if (item.width !== undefined) {
-      const widthComponent = getComponent(
-        {
-          component: 'slider',
-          title: '宽度',
-          componentProps: {
-            min: 100,
-            max: 500
-          }
-        },
-        item,
-        'width'
-      )
-      res.push(widthComponent)
-    }
-
-    if (item.slot !== undefined) {
-      const slotComponent = getComponent(
-        {
-          component: 'input',
-          title: '按钮文本'
-        },
-        item,
-        'slot'
-      )
-      res.push(slotComponent)
-    }
-    if (!item.componentProps) return
-    const { placeholder, showCount } = item.componentProps
-    if (placeholder !== undefined) {
-      const placeholderComponent = getComponent(
-        {
-          component: 'input',
-          title: 'placeholder',
-          componentProps: {
-            placeholder: '请输入'
-          }
-        },
-        item,
-        'componentProps.placeholder'
-      )
-      res.push(placeholderComponent)
-    }
-    if (showCount !== undefined) {
-      const numberComponent = getComponent(
-        {
-          component: 'checkbox',
-          title: '显示数字'
-        },
-        item,
-        'componentProps.showCount'
-      )
-      res.push(numberComponent)
-    }
-    configList.value = res.map((item) => handleOn(item))
+    configList.value = getComponent(componentConfigOptions, item)
   }
   return {
     configList,
@@ -285,16 +153,15 @@ export const useInjectActiveComponent = (data: IActiveComponentKeyRef = ref(null
 }
 const useGetItemContent = (item: IItem, formState: IFormState, id: string): IItemContent => {
   const itemClone = cloneDeep(item)
-  const itemContent = getOption(
-    {
+  const configOptions = {
+    options: {
       ...itemClone,
       id,
       span: 24
     },
-    formState,
-    id
-  )
-  return reactive(handleOn(itemContent))
+    path: id
+  }
+  return reactive(handleConfigOptions(configOptions, formState, false) as IItemContent)
 }
 export const useItemContent = (item: IItem, formState: IFormState): IItemContent => {
   return useGetItemContent(item, formState, uuidv4())
