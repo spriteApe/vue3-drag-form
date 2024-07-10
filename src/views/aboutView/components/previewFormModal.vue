@@ -24,14 +24,15 @@ const open = defineModel<boolean>({
   required: true
 })
 const renderFormRef = ref()
+const handleCancel = () => {
+  renderFormRef.value!.formRef.resetFields()
+  open.value = false
+}
 const handleOk = () => {
   renderFormRef.value!.formRef.validate().then((res: IFormState) => {
     console.log(res)
     message.success('校验成功')
-    open.value = false
+    handleCancel()
   })
-}
-const handleCancel = () => {
-  renderFormRef.value!.formRef.resetFields()
 }
 </script>

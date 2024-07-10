@@ -9,7 +9,8 @@ import type {
   IItemContent,
   IItem,
   IActiveComponent,
-  IConfigOptions
+  IConfigOptions,
+  IItemContentOther
 } from './types'
 import type { Ref } from 'vue'
 
@@ -130,9 +131,9 @@ export const usePreviewSchemas = (schemas: ISchemasRef, formState: IFormState) =
     schemas,
     (data) => {
       newSchemas.value = data.map((item) => {
-        const { id } = item //保持原来的id
+        const { id, span } = item //保持原来的id和span
         Reflect.deleteProperty(item, 'on') //相关的事件删除 避免影响最外层的formState
-        const itemContent = useGetItemContent(item, formState, id)
+        const itemContent = useGetItemContent(item, formState, { id, span })
         return itemContent
       })
     },
@@ -151,20 +152,24 @@ export const useProvideActiveComponent = (data: IActiveComponentKeyRef) => {
 export const useInjectActiveComponent = (data: IActiveComponentKeyRef = ref(null)) => {
   return inject(activeComponentKey, data) ?? data
 }
-const useGetItemContent = (item: IItem, formState: IFormState, id: string): IItemContent => {
+
+const useGetItemContent = (
+  item: IItem,
+  formState: IFormState,
+  option: IItemContentOther
+): IItemContent => {
   const itemClone = cloneDeep(item)
   const configOptions = {
     options: {
       ...itemClone,
-      id,
-      span: 24
+      ...option
     },
-    path: id
+    path: option.id
   }
   return reactive(handleConfigOptions(configOptions, formState, false) as IItemContent)
 }
-export const useItemContent = (item: IItem, formState: IFormState): IItemContent => {
-  return useGetItemContent(item, formState, uuidv4())
+export const useItemContent = (item: IItem, formState: IFormState, span = 24): IItemContent => {
+  return useGetItemContent(item, formState, { id: uuidv4(), span })
 }
 
 const previewKey = Symbol('preview')

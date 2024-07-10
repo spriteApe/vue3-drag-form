@@ -8,10 +8,11 @@ export type IItem = {
   componentProps?: Record<string, any>
   on?: IListens
 }
-export type IItemContent = IItem & {
+export interface IItemContentOther {
   id: string
   span: number
 }
+export type IItemContent = IItem & IItemContentOther
 export type IConfigList = Omit<IItemContent, 'span'>
 export type IFormLayout = 'horizontal' | 'vertical' | 'inline'
 export type IActiveComponent = IItemContent | null

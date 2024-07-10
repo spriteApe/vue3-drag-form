@@ -40,7 +40,7 @@ const formState = useInjectFormState()
 const copyItem = () => {
   const currentIndex = schemas.value.findIndex((item) => item === props.item)
   if (currentIndex === -1) return
-  const itemContent = useItemContent(props.item, formState)
+  const itemContent = useItemContent(props.item, formState, props.item.span)
   updateConfigList(itemContent)
   schemas.value.splice(currentIndex + 1, 0, itemContent)
 }
