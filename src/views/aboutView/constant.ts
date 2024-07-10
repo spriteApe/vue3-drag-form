@@ -1,23 +1,4 @@
 import type { IItem, IConfigOptions } from './types'
-const options1 = [
-  {
-    value: 'jack',
-    label: 'Jack'
-  },
-  {
-    value: 'lucy',
-    label: 'Lucy'
-  },
-  {
-    value: 'disabled',
-    label: 'Disabled',
-    disabled: true
-  },
-  {
-    value: 'yiminghe',
-    label: 'Yiminghe'
-  }
-]
 export const componentList: IItem[] = [
   {
     title: '按钮',
@@ -59,7 +40,16 @@ export const componentList: IItem[] = [
     component: 'a-select',
     componentProps: {
       placeholder: '请选择内容',
-      options: options1
+      options: [
+        {
+          value: 'jack',
+          label: 'Jack'
+        },
+        {
+          value: 'lucy',
+          label: 'Lucy'
+        }
+      ]
     }
   }
 ]
@@ -177,6 +167,13 @@ export const componentConfigOptions: IConfigOptions[] = [
       }
     },
     path: 'componentProps.placeholder'
+  },
+  {
+    options: {
+      component: 'optionDataConfig',
+      title: '选项数据'
+    },
+    path: 'componentProps.options'
   },
   {
     options: {

@@ -21,13 +21,7 @@
         <a-col :span="item.span" v-for="item in schemas" :key="item.id">
           <editComponent :item>
             <a-form-item :label="item.title" :name="item.id">
-              <component
-                :is="item.component"
-                :style="item.width ? { width: item.width + 'px' } : {}"
-                v-bind="item.componentProps"
-              >
-                {{ item.slot }}
-              </component>
+              <dynamicRenderingComponent :item />
             </a-form-item>
           </editComponent>
         </a-col>
@@ -37,6 +31,7 @@
 </template>
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus'
+import dynamicRenderingComponent from './dynamicRenderingComponent.vue'
 import {
   useInjectFormState,
   useInjectSchemas,

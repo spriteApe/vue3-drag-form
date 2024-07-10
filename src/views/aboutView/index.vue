@@ -12,7 +12,7 @@
         <renderForm />
       </div>
     </div>
-    <div class="config w-60 p-4 h-full overflow-auto">
+    <div class="config w-100 p-4 h-full overflow-auto">
       <optionConfig />
     </div>
   </div>
