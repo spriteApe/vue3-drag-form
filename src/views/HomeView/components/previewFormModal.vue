@@ -1,25 +1,13 @@
 <template>
   <a-modal v-model:open="open" title="预览表单" @ok="handleOk" @cancel="handleCancel">
-    <renderForm ref="renderFormRef" />
+    <renderForm ref="renderFormRef" :isPreview="true" />
   </a-modal>
 </template>
 <script lang="ts" setup>
 import renderForm from './renderForm.vue'
 import type { IFormState } from '../types'
-import {
-  useProvideFormState,
-  useProvidePreview,
-  useInjectSchemas,
-  useProvideSchemas,
-  usePreviewSchemas
-} from '../hooks'
 import { message } from 'ant-design-vue'
-const formState = reactive<IFormState>({})
-useProvideFormState(formState)
-useProvidePreview(true)
-const schemas = useInjectSchemas()
-const newSchemas = usePreviewSchemas(schemas, formState)
-useProvideSchemas(newSchemas)
+
 const open = defineModel<boolean>({
   required: true
 })

@@ -20,33 +20,20 @@
   </div>
 </template>
 <script lang="ts" setup>
-import type { IItemContent, IFormProps, IFormState, IActiveComponent } from './types'
 import componentDictionary from './components/componentDictionary.vue'
 import renderForm from './components/renderForm.vue'
 import optionConfig from './components/optionConfig.vue'
 import previewFormModal from './components/previewFormModal.vue'
-import {
-  useProvideFormState,
-  useProvideFormProps,
-  useProvideSchemas,
-  useProvideActiveComponent,
-  useItemContentByItemContent
-} from './hooks'
-import { getInitFormProps, getModelKey, uploadJson, downloadJson } from './utils'
+import { useItemContentByItemContent } from './hooks'
+import { getModelKey, uploadJson, downloadJson } from './utils'
 import { cloneDeep } from 'lodash-es'
-const formState = reactive<IFormState>({})
-const formProps = reactive<IFormProps>(getInitFormProps())
-const schemas = ref<IItemContent[]>([])
-const activeComponent = ref<IActiveComponent>(null)
-useProvideFormState(formState)
-useProvideFormProps(formProps)
-useProvideSchemas(schemas)
-useProvideActiveComponent(activeComponent)
+import { useDragFormStore } from '@/stores/dragForm'
+const dragFormStore = useDragFormStore()
 
 const previewFormModalVisible = ref(false)
 
 const handleExport = () => {
-  const schemasClone = cloneDeep(schemas.value)
+  const schemasClone = cloneDeep(dragFormStore.schemas)
   const result = schemasClone.map((item) => {
     const modelKey = getModelKey(item.component)
     const updateModelKey = 'onUpdate:' + modelKey
@@ -55,7 +42,7 @@ const handleExport = () => {
     return item
   })
   const formPropsClone = {
-    ...cloneDeep(formProps),
+    ...cloneDeep(dragFormStore.formProps),
     schemas: result
   }
   downloadJson(formPropsClone)
@@ -71,13 +58,13 @@ const handleImport = () => {
     } = res
     Reflect.deleteProperty(res, 'schemas')
     // Object.assign(formProps, res) //不能这样,会导致响应式丢失
-    formProps.labelCol.span = labelColSpan
-    formProps.wrapperCol.span = wrapperColSpan
-    formProps.layout = layout
+    dragFormStore.formProps.labelCol.span = labelColSpan
+    dragFormStore.formProps.wrapperCol.span = wrapperColSpan
+    dragFormStore.formProps.layout = layout
     const result = schemasJson.map((options) => {
-      return useItemContentByItemContent(options, formState)
+      return useItemContentByItemContent(options, dragFormStore.formState)
     })
-    schemas.value = result
+    dragFormStore.schemas = result
   })
 }
 </script>

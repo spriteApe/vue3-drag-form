@@ -16,27 +16,27 @@
 <script lang="ts" setup>
 import type { IItemContent } from '../types'
 import { emitter } from '../mitt'
-import {
-  useInjectSchemas,
-  useInjectActiveComponent,
-  useInjectFormState,
-  useItemContent,
-  useInjectPreview
-} from '../hooks'
+import { useItemContent } from '../hooks'
 import { CopyOutlined, DeleteOutlined } from '@ant-design/icons-vue'
-const isPreview = useInjectPreview()
-const activeComponent = useInjectActiveComponent()
-const schemas = useInjectSchemas()
-const props = defineProps<{
-  item: IItemContent
-}>()
+import { useDragFormStore } from '@/stores/dragForm'
+const dragFormStore = useDragFormStore()
+
+const props = withDefaults(
+  defineProps<{
+    isPreview?: boolean
+    item: IItemContent
+  }>(),
+  {
+    isPreview: false
+  }
+)
+const { formState, schemas } = dragFormStore.renderComponentGetData(props.isPreview)
 const updateConfigList = (item?: IItemContent) => {
-  if (activeComponent.value === item) return
-  activeComponent.value = item ?? null
+  if (dragFormStore.activeComponent === item) return
+  dragFormStore.activeComponent = item ?? null
   emitter.emit('update:configList', item)
 }
-const activeVisible = computed(() => activeComponent.value === props.item)
-const formState = useInjectFormState()
+const activeVisible = computed(() => dragFormStore.activeComponent === props.item)
 const copyItem = () => {
   const currentIndex = schemas.value.findIndex((item) => item === props.item)
   if (currentIndex === -1) return

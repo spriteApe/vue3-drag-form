@@ -102,29 +102,7 @@ export const useCompileConfigList = () => {
     updateConfigList
   }
 }
-
-const formStateKey = Symbol('formState')
-export const useProvideFormState = (data: IFormState) => {
-  provide(formStateKey, data)
-}
-export const useInjectFormState = (data: IFormState = {}) => {
-  return inject(formStateKey, data) ?? data
-}
-const formPropsKey = Symbol('formProps')
-export const useProvideFormProps = (data: IFormProps) => {
-  provide(formPropsKey, data)
-}
-export const useInjectFormProps = (data = getInitFormProps()) => {
-  return inject(formPropsKey, data) ?? data
-}
-const schemasKey = Symbol('schemas')
 type ISchemasRef = Ref<IItemContent[]>
-export const useProvideSchemas = (data: ISchemasRef) => {
-  provide(schemasKey, data)
-}
-export const useInjectSchemas = (data: ISchemasRef = ref([])) => {
-  return inject(schemasKey, data) ?? data
-}
 export const usePreviewSchemas = (schemas: ISchemasRef, formState: IFormState) => {
   const newSchemas = ref<IItemContent[]>([])
   watch(
@@ -142,14 +120,6 @@ export const usePreviewSchemas = (schemas: ISchemasRef, formState: IFormState) =
     }
   )
   return newSchemas
-}
-const activeComponentKey = Symbol('activeComponent')
-type IActiveComponentKeyRef = Ref<IActiveComponent>
-export const useProvideActiveComponent = (data: IActiveComponentKeyRef) => {
-  provide(activeComponentKey, data)
-}
-export const useInjectActiveComponent = (data: IActiveComponentKeyRef = ref(null)) => {
-  return inject(activeComponentKey, data) ?? data
 }
 
 const useGetItemContent = (
@@ -175,11 +145,4 @@ export const useItemContentByItemContent = (
   formState: IFormState
 ): IItemContent => {
   return useGetItemContent(item, formState, { id: item.id, span: item.span }) //保持原来的id和span
-}
-const previewKey = Symbol('preview')
-export const useProvidePreview = (data: boolean) => {
-  provide(previewKey, data)
-}
-export const useInjectPreview = (data = false) => {
-  return inject(previewKey, data) ?? data
 }

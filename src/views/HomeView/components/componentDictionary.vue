@@ -23,27 +23,21 @@ import { VueDraggable } from 'vue-draggable-plus'
 import type { IItem } from '../types'
 import { componentList } from '../constant'
 import { emitter } from '../mitt'
-import {
-  useInjectFormState,
-  useInjectSchemas,
-  useInjectActiveComponent,
-  useItemContent
-} from '../hooks'
-const formState = useInjectFormState()
-const schemas = useInjectSchemas()
+import { useItemContent } from '../hooks'
+import { useDragFormStore } from '@/stores/dragForm'
+const dragFormStore = useDragFormStore()
 
-const activeComponent = useInjectActiveComponent()
 function clone(element: IItem) {
-  const itemContent = useItemContent(element, formState)
+  const itemContent = useItemContent(element, dragFormStore.formState)
   emitter.emit('update:configList', itemContent)
-  activeComponent.value = itemContent
+  dragFormStore.activeComponent = itemContent
   return itemContent
 }
 const addComponent = (item: IItem) => {
-  const itemContent = useItemContent(item, formState)
-  activeComponent.value = itemContent
+  const itemContent = useItemContent(item, dragFormStore.formState)
+  dragFormStore.activeComponent = itemContent
   emitter.emit('update:configList', itemContent)
-  schemas.value.push(itemContent)
+  dragFormStore.schemas.push(itemContent)
 }
 </script>
 <style lang="scss" scoped></style>

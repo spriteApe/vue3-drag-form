@@ -1,7 +1,7 @@
 <template>
   <a-form
     :model="formState"
-    v-bind="formProps"
+    v-bind="dragFormStore.formProps"
     :rules="formRules"
     :name="formName"
     ref="formRef"
@@ -19,7 +19,7 @@
         class="w-full flex flex-wrap"
       >
         <a-col :span="item.span" v-for="item in schemas" :key="item.id">
-          <editComponent :item>
+          <editComponent :item :isPreview>
             <a-form-item :label="item.title" :name="item.id">
               <dynamicRenderingComponent :item />
             </a-form-item>
@@ -32,20 +32,21 @@
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus'
 import dynamicRenderingComponent from './dynamicRenderingComponent.vue'
-import {
-  useInjectFormState,
-  useInjectSchemas,
-  useInjectFormProps,
-  useInjectPreview
-} from '../hooks'
 import editComponent from './editComponent.vue'
 import type { Rule } from 'ant-design-vue/es/form'
 import type { FormInstance } from 'ant-design-vue'
 import { v4 as uuidv4 } from 'uuid'
-const isPreview = useInjectPreview()
-const formState = useInjectFormState()
-const schemas = useInjectSchemas()
-const formProps = useInjectFormProps()
+import { useDragFormStore } from '@/stores/dragForm'
+const dragFormStore = useDragFormStore()
+const props = withDefaults(
+  defineProps<{
+    isPreview?: boolean
+  }>(),
+  {
+    isPreview: false
+  }
+)
+const { formState, schemas } = dragFormStore.renderComponentGetData(props.isPreview)
 const onFinish = (values: any) => {
   console.log('Success:', values)
 }

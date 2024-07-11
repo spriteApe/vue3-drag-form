@@ -13,12 +13,13 @@
   </a-tabs>
 </template>
 <script lang="ts" setup>
-import { useCompileFormConfigList, useInjectFormProps, useCompileConfigList } from '../hooks'
+import { useCompileFormConfigList, useCompileConfigList } from '../hooks'
 import { emitter } from '../mitt'
 import dynamicRenderingComponent from './dynamicRenderingComponent.vue'
+import { useDragFormStore } from '@/stores/dragForm'
+const dragFormStore = useDragFormStore()
 const activeKey = ref('1')
-const formProps = useInjectFormProps()
-const formConfigList = useCompileFormConfigList(formProps)
+const formConfigList = useCompileFormConfigList(dragFormStore.formProps)
 const { configList, updateConfigList } = useCompileConfigList()
 emitter.on('update:configList', (res) => {
   updateConfigList(res)
