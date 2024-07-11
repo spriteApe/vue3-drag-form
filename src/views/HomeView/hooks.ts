@@ -131,9 +131,8 @@ export const usePreviewSchemas = (schemas: ISchemasRef, formState: IFormState) =
     schemas,
     (data) => {
       newSchemas.value = data.map((item) => {
-        const { id, span } = item //保持原来的id和span
         Reflect.deleteProperty(item, 'on') //相关的事件删除 避免影响最外层的formState
-        const itemContent = useGetItemContent(item, formState, { id, span })
+        const itemContent = useItemContentByItemContent(item, formState)
         return itemContent
       })
     },
@@ -171,7 +170,12 @@ const useGetItemContent = (
 export const useItemContent = (item: IItem, formState: IFormState, span = 24): IItemContent => {
   return useGetItemContent(item, formState, { id: uuidv4(), span })
 }
-
+export const useItemContentByItemContent = (
+  item: IItemContent,
+  formState: IFormState
+): IItemContent => {
+  return useGetItemContent(item, formState, { id: item.id, span: item.span }) //保持原来的id和span
+}
 const previewKey = Symbol('preview')
 export const useProvidePreview = (data: boolean) => {
   provide(previewKey, data)

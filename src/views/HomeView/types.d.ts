@@ -27,3 +27,4 @@ export type IConfigOptions = {
   options: IItem | IConfigList
   path: string
 }
+export type IExportAndImportJSON = IFormProps & { schemas: IItemContent[] }
