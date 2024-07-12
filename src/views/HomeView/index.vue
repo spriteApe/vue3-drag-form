@@ -57,7 +57,7 @@ const handleImport = () => {
       layout
     } = res
     Reflect.deleteProperty(res, 'schemas')
-    // Object.assign(formProps, res) //不能这样,会导致响应式丢失
+    // Object.assign(dragFormStore.formProps, res) //不能这样,会导致响应式丢失
     dragFormStore.formProps.labelCol.span = labelColSpan
     dragFormStore.formProps.wrapperCol.span = wrapperColSpan
     dragFormStore.formProps.layout = layout
