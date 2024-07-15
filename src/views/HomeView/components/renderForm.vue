@@ -1,6 +1,6 @@
 <template>
   <a-form
-    :model="formState"
+    :model="currentFormState"
     v-bind="dragFormStore.formProps"
     :rules="formRules"
     :name="formName"
@@ -11,14 +11,14 @@
   >
     <a-row>
       <VueDraggable
-        v-model="schemas"
+        v-model="showSchemas"
         :animation="150"
         group="people"
         :disabled="isPreview"
         ghostClass="ghost"
         class="w-full flex flex-wrap"
       >
-        <a-col :span="item.span" v-for="item in schemas" :key="item.id">
+        <a-col :span="item.span" v-for="item in showSchemas" :key="item.id">
           <editComponent :item :isPreview>
             <a-form-item :label="item.title" :name="item.id">
               <dynamicRenderingComponent :item />
@@ -37,6 +37,7 @@ import type { Rule } from 'ant-design-vue/es/form'
 import type { FormInstance } from 'ant-design-vue'
 import { v4 as uuidv4 } from 'uuid'
 import { useDragFormStore } from '@/stores/dragForm'
+import { useVisibleConfigStore } from '@/stores/visibleConfig'
 const dragFormStore = useDragFormStore()
 const props = withDefaults(
   defineProps<{
@@ -46,7 +47,27 @@ const props = withDefaults(
     isPreview: false
   }
 )
-const { formState, schemas } = dragFormStore.renderComponentGetData(props.isPreview)
+const { formState: currentFormState, schemas } = dragFormStore.renderComponentGetData(
+  props.isPreview
+)
+const visibleConfigStore = useVisibleConfigStore()
+watch(
+  () => currentFormState,
+  () => {
+    Object.keys(visibleConfigStore.totalFormState).forEach((key) => {
+      const formState = visibleConfigStore.totalFormState[key]
+      const hidden = Object.keys(formState).every((key) => {
+        return formState[key] === currentFormState[key]
+      })
+      const thatOne = schemas.value.find((item) => item.id === key)
+      if (!thatOne) return
+      thatOne.visible = !hidden
+    })
+  },
+  {
+    deep: true
+  }
+)
 const onFinish = (values: any) => {
   console.log('Success:', values)
 }
@@ -55,6 +76,7 @@ defineExpose({
   formRef: formRef
 })
 const formName = 'formName' + uuidv4()
+const showSchemas = computed(() => schemas.value.filter((item) => item.visible))
 const formRules = computed(() => {
   return schemas.value.reduce(
     (pre, cur) => {

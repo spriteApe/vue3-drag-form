@@ -3,6 +3,7 @@ export type IItem = {
   title: string
   component: string
   required?: boolean
+  visible?: boolean
   width?: number
   slot?: string
   componentProps?: Record<string, any>

@@ -177,6 +177,13 @@ export const componentConfigOptions: IConfigOptions[] = [
   },
   {
     options: {
+      component: 'visibleConfig',
+      title: '隐藏条件'
+    },
+    path: 'visible'
+  },
+  {
+    options: {
       component: 'a-checkbox',
       title: '显示数字'
     },

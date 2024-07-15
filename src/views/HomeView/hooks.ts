@@ -95,6 +95,14 @@ export const useCompileConfigList = () => {
       return
     }
     item.required = item.required ?? false
+    item.visible = item.visible ?? true
+    // 把表单id和配置项目对应 visibleConfig.vue
+    componentConfigOptions.forEach(({ options }) => {
+      if (!options.componentProps) {
+        options.componentProps = {}
+      }
+      options.componentProps.id = item.id
+    })
     configList.value = getComponent(componentConfigOptions, item)
   }
   return {
@@ -122,10 +130,11 @@ export const usePreviewSchemas = (schemas: ISchemasRef, formState: IFormState) =
   return newSchemas
 }
 
-const useGetItemContent = (
+export const useGetItemContent = (
   item: IItem,
   formState: IFormState,
-  option: IItemContentOther
+  option: IItemContentOther,
+  path = option.id
 ): IItemContent => {
   const itemClone = cloneDeep(item)
   const configOptions = {
@@ -133,10 +142,11 @@ const useGetItemContent = (
       ...itemClone,
       ...option
     },
-    path: option.id
+    path
   }
   return reactive(handleConfigOptions(configOptions, formState, false) as IItemContent)
 }
+
 export const useItemContent = (item: IItem, formState: IFormState, span = 24): IItemContent => {
   return useGetItemContent(item, formState, { id: uuidv4(), span })
 }
