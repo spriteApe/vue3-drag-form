@@ -71,15 +71,16 @@ const handleConfigOptions = (
 }
 const getComponent = (optionList: IConfigOptions[], obj: Record<string, any>) => {
   return optionList
-    .map((item) =>
-      handleConfigOptions(
+    .map((item) => {
+      const uid = uuidv4()
+      return handleConfigOptions(
         {
-          options: { ...item.options, id: uuidv4() },
+          options: { ...item.options, _id: uid, id: uid },
           path: item.path
         },
         obj
       )
-    )
+    })
     .filter(Boolean) as IConfigList[]
 }
 export const useCompileFormConfigList = (formProps: IFormProps) => {
@@ -101,7 +102,7 @@ export const useCompileConfigList = () => {
       if (!options.componentProps) {
         options.componentProps = {}
       }
-      options.componentProps.id = item.id
+      options.componentProps._id = item._id
     })
     configList.value = getComponent(componentConfigOptions, item)
   }
@@ -134,7 +135,7 @@ export const useGetItemContent = (
   item: IItem,
   formState: IFormState,
   option: IItemContentOther,
-  path = option.id
+  path = option._id
 ): IItemContent => {
   const itemClone = cloneDeep(item)
   const configOptions = {
@@ -148,11 +149,12 @@ export const useGetItemContent = (
 }
 
 export const useItemContent = (item: IItem, formState: IFormState, span = 24): IItemContent => {
-  return useGetItemContent(item, formState, { id: uuidv4(), span })
+  const uid = uuidv4()
+  return useGetItemContent(item, formState, { id: uid, _id: uid, span })
 }
 export const useItemContentByItemContent = (
   item: IItemContent,
   formState: IFormState
 ): IItemContent => {
-  return useGetItemContent(item, formState, { id: item.id, span: item.span }) //保持原来的id和span
+  return useGetItemContent(item, formState, { id: item.id, _id: item._id, span: item.span }) //保持原来的id和span
 }

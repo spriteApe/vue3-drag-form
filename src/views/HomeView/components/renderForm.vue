@@ -18,9 +18,9 @@
         ghostClass="ghost"
         class="w-full flex flex-wrap"
       >
-        <a-col :span="item.span" v-for="item in showSchemas" :key="item.id">
+        <a-col :span="item.span" v-for="item in showSchemas" :key="item._id">
           <editComponent :item :isPreview>
-            <a-form-item :label="item.title" :name="item.id">
+            <a-form-item :label="item.title" :name="item._id">
               <dynamicRenderingComponent :item />
             </a-form-item>
           </editComponent>
@@ -59,7 +59,7 @@ watch(
       const hidden = Object.keys(formState).every((key) => {
         return formState[key] === currentFormState[key]
       })
-      const thatOne = schemas.value.find((item) => item.id === key)
+      const thatOne = schemas.value.find((item) => item._id === key)
       if (!thatOne) return
       thatOne.visible = !hidden
     })
@@ -82,7 +82,7 @@ const formRules = computed(() => {
     (pre, cur) => {
       if (!cur.required) return pre
       const message = cur.componentProps?.placeholder ?? '请完善' + cur.title
-      pre[cur.id] = [{ message, required: cur.required, trigger: 'change' }]
+      pre[cur._id] = [{ message, required: cur.required, trigger: 'change' }]
       return pre
     },
     {} as Record<string, Rule[]>

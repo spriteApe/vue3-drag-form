@@ -2,11 +2,11 @@
   <div>
     <a-button :type="buttonType" @click="open = true">设置隐藏条件</a-button>
     <a-modal v-model:open="open" title="隐藏条件" @ok="handleOk">
-      <div class="flex items-center p-4" v-for="(item, index) in formStateList" :key="item.id">
+      <div class="flex items-center p-4" v-for="(item, index) in formStateList" :key="item.key">
         <a-select
-          v-model:value="formStateList[index].id"
+          v-model:value="formStateList[index].key"
           style="width: 120px"
-          :options="getOptions(formStateList[index].id)"
+          :options="getOptions(formStateList[index].key)"
           @change="() => (formStateList[index].value = undefined)"
         ></a-select>
         <span class="mx-4">等于</span>
@@ -28,18 +28,18 @@ const dragFormStore = useDragFormStore()
 const visibleConfigStore = useVisibleConfigStore()
 const open = ref<boolean>(false)
 const buttonType = computed<ButtonProps['type']>(() =>
-  !visibleConfigStore.totalFormState[props.id] ? 'primary' : 'link'
+  !visibleConfigStore.totalFormState[props._id] ? 'primary' : 'link'
 )
-const props = defineProps<{ id: string }>()
-const formState = visibleConfigStore.getFormState(props.id)
+const props = defineProps<{ _id: string }>()
+const formState = visibleConfigStore.getFormState(props._id)
 type IFormStateListItem = {
-  id?: string
+  key?: string
   value?: string | number
 }
 const getFormStateList = (): IFormStateListItem[] => {
   const res = Object.keys(formState).map((key) => {
     return {
-      id: key,
+      key,
       value: formState[key]
     }
   })
@@ -52,11 +52,11 @@ const handleOk = () => {
   open.value = false
   const formStateListFilterNull = filterNull(formStateList.value)
   visibleConfigStore.setFormState(
-    props.id,
+    props._id,
     formStateListFilterNull.reduce(
       (pre, cur) => {
-        if (!cur.id) return pre
-        pre[cur.id] = cur.value
+        if (!cur.key) return pre
+        pre[cur.key] = cur.value
         return pre
       },
       {} as Record<string, any>
@@ -64,12 +64,17 @@ const handleOk = () => {
   )
 }
 const renderItem = (options: IFormStateListItem) => {
-  if (!options.id) return
-  const thatComponent = dragFormStore.schemas.find((item) => item.id === options.id)
+  if (!options.key) return
+  const thatComponent = dragFormStore.schemas.find((item) => item._id === options.key)
   if (!thatComponent) return
   const { span } = thatComponent //保持原来的id和span
   Reflect.deleteProperty(thatComponent, 'on') //相关的事件删除 避免影响最外层的formState
-  return useGetItemContent(thatComponent, options, { id: options.id, span }, 'value')
+  return useGetItemContent(
+    thatComponent,
+    options,
+    { id: options.key, _id: options.key, span },
+    'value'
+  )
 }
 const restState = () => {
   formStateList.value = [{}]
@@ -78,12 +83,12 @@ const selectOptions = computed(() =>
   dragFormStore.schemas
     .filter((item) => item !== dragFormStore.activeComponent)
     .map((item) => ({
-      value: item.id,
-      label: item.title || item.id
+      value: item._id,
+      label: item.title || item._id
     }))
 )
 const getOptions = (selectId?: string) => {
-  let selectIds = formStateList.value.map((item) => item.id).filter(Boolean) as string[]
+  let selectIds = formStateList.value.map((item) => item.key).filter(Boolean) as string[]
   selectIds = selectIds.filter((item) => item !== selectId)
   return selectOptions.value.filter((item) => !selectIds.includes(item.value))
 }

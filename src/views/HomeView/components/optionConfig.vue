@@ -1,11 +1,11 @@
 <template>
   <a-tabs v-model:activeKey="activeKey">
     <a-tab-pane key="1" tab="表单">
-      <div v-for="item in formConfigList" :key="item.id">
+      <div v-for="item in formConfigList" :key="item._id">
         {{ item.title }}: <dynamicRenderingComponent :item /></div
     ></a-tab-pane>
     <a-tab-pane key="2" tab="组件">
-      <div v-for="item in configList" :key="item.id">
+      <div v-for="item in configList" :key="item._id">
         {{ item.title }}:
         <dynamicRenderingComponent :item />
       </div>

@@ -11,6 +11,7 @@ export type IItem = {
 }
 export interface IItemContentOther {
   id: string
+  _id: string
   span: number
 }
 export type IItemContent = IItem & IItemContentOther
