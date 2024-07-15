@@ -4,10 +4,10 @@
     <a-modal v-model:open="open" title="隐藏条件" @ok="handleOk">
       <div class="flex items-center p-4" v-for="(item, index) in formStateList" :key="item.id">
         <a-select
-          ref="select"
           v-model:value="formStateList[index].id"
           style="width: 120px"
-          :options="selectOptions"
+          :options="getOptions(formStateList[index].id)"
+          @change="() => (formStateList[index].value = undefined)"
         ></a-select>
         <span class="mx-4">等于</span>
         <dynamicRenderingComponent :item="renderItem(item)!" v-if="renderItem(item)" />
@@ -21,7 +21,7 @@
 <script lang="ts" setup>
 import { useGetItemContent } from '@/views/HomeView/hooks'
 import dynamicRenderingComponent from '@/views/HomeView/components/dynamicRenderingComponent.vue'
-import type { SelectProps, ButtonProps } from 'ant-design-vue'
+import type { ButtonProps } from 'ant-design-vue'
 import { useVisibleConfigStore } from '@/stores/visibleConfig'
 import { useDragFormStore } from '@/stores/dragForm'
 const dragFormStore = useDragFormStore()
@@ -74,7 +74,7 @@ const renderItem = (options: IFormStateListItem) => {
 const restState = () => {
   formStateList.value = [{}]
 }
-const selectOptions = computed<SelectProps['options']>(() =>
+const selectOptions = computed(() =>
   dragFormStore.schemas
     .filter((item) => item !== dragFormStore.activeComponent)
     .map((item) => ({
@@ -82,6 +82,11 @@ const selectOptions = computed<SelectProps['options']>(() =>
       label: item.title || item.id
     }))
 )
+const getOptions = (selectId?: string) => {
+  let selectIds = formStateList.value.map((item) => item.id).filter(Boolean) as string[]
+  selectIds = selectIds.filter((item) => item !== selectId)
+  return selectOptions.value.filter((item) => !selectIds.includes(item.value))
+}
 const addFormStateList = () => {
   formStateList.value.push({})
 }
