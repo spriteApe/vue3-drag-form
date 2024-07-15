@@ -38,6 +38,7 @@ import type { FormInstance } from 'ant-design-vue'
 import { v4 as uuidv4 } from 'uuid'
 import { useDragFormStore } from '@/stores/dragForm'
 import { useVisibleConfigStore } from '@/stores/visibleConfig'
+import { emitter } from '../mitt'
 const dragFormStore = useDragFormStore()
 const props = withDefaults(
   defineProps<{
@@ -51,23 +52,19 @@ const { formState: currentFormState, schemas } = dragFormStore.renderComponentGe
   props.isPreview
 )
 const visibleConfigStore = useVisibleConfigStore()
-watch(
-  () => currentFormState,
-  () => {
-    Object.keys(visibleConfigStore.totalFormState).forEach((key) => {
-      const formState = visibleConfigStore.totalFormState[key]
-      const hidden = Object.keys(formState).every((key) => {
-        return formState[key] === currentFormState[key]
-      })
-      const thatOne = schemas.value.find((item) => item._id === key)
-      if (!thatOne) return
-      thatOne.visible = !hidden
+const handleVisible = () => {
+  Object.keys(visibleConfigStore.totalFormState).forEach((key) => {
+    const formState = visibleConfigStore.totalFormState[key]
+    const hidden = Object.keys(formState).every((key) => {
+      return formState[key] === currentFormState[key]
     })
-  },
-  {
-    deep: true
-  }
-)
+    const thatOne = schemas.value.find((item) => item._id === key)
+    if (!thatOne) return
+    thatOne.visible = !hidden
+  })
+}
+emitter.on('check-visible', handleVisible)
+watch(currentFormState, handleVisible)
 const onFinish = (values: any) => {
   console.log('Success:', values)
 }

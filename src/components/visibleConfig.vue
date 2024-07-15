@@ -10,7 +10,9 @@
           @change="() => (formStateList[index].value = undefined)"
         ></a-select>
         <span class="mx-4">等于</span>
-        <dynamicRenderingComponent :item="renderItem(item)!" v-if="renderItem(item)" />
+        <div class="flex-1">
+          <dynamicRenderingComponent :item="renderItem(item)!" v-if="renderItem(item)" />
+        </div>
         <span class="mx-4 c-red cursor-pointer" @click="delFormStateList(index)"> 删除 </span>
       </div>
       <a-button @click="addFormStateList">新增一条</a-button>
@@ -20,6 +22,7 @@
 </template>
 <script lang="ts" setup>
 import { useGetItemContent } from '@/views/HomeView/hooks'
+import { emitter } from '@/views/HomeView/mitt'
 import dynamicRenderingComponent from '@/views/HomeView/components/dynamicRenderingComponent.vue'
 import { useVisibleConfigStore } from '@/stores/visibleConfig'
 import { useDragFormStore } from '@/stores/dragForm'
@@ -59,6 +62,7 @@ const handleOk = () => {
       {} as Record<string, any>
     )
   )
+  emitter.emit('check-visible') //立即更新一次
 }
 const renderItem = (options: IFormStateListItem) => {
   if (!options.key) return
