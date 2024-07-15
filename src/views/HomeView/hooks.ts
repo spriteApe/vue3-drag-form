@@ -1,4 +1,4 @@
-import { handleOn, getInitFormProps, getModelKey } from './utils'
+import { handleOn, getModelKey } from './utils'
 import { v4 as uuidv4 } from 'uuid'
 import { formConfigOptions, componentConfigOptions } from './constant'
 import { cloneDeep, get } from 'lodash-es'
@@ -8,7 +8,6 @@ import type {
   IFormState,
   IItemContent,
   IItem,
-  IActiveComponent,
   IConfigOptions,
   IItemContentOther
 } from './types'
@@ -72,10 +71,9 @@ const handleConfigOptions = (
 const getComponent = (optionList: IConfigOptions[], obj: Record<string, any>) => {
   return optionList
     .map((item) => {
-      const uid = uuidv4()
       return handleConfigOptions(
         {
-          options: { ...item.options, _id: uid, id: uid },
+          options: { ...item.options, _id: uuidv4() },
           path: item.path
         },
         obj

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a-button :type="buttonType" @click="open = true">设置隐藏条件</a-button>
+    <a-button type="primary" :danger="buttonDanger" @click="open = true">设置隐藏条件</a-button>
     <a-modal v-model:open="open" title="隐藏条件" @ok="handleOk">
       <div class="flex items-center p-4" v-for="(item, index) in formStateList" :key="item.key">
         <a-select
@@ -21,15 +21,12 @@
 <script lang="ts" setup>
 import { useGetItemContent } from '@/views/HomeView/hooks'
 import dynamicRenderingComponent from '@/views/HomeView/components/dynamicRenderingComponent.vue'
-import type { ButtonProps } from 'ant-design-vue'
 import { useVisibleConfigStore } from '@/stores/visibleConfig'
 import { useDragFormStore } from '@/stores/dragForm'
 const dragFormStore = useDragFormStore()
 const visibleConfigStore = useVisibleConfigStore()
 const open = ref<boolean>(false)
-const buttonType = computed<ButtonProps['type']>(() =>
-  !visibleConfigStore.totalFormState[props._id] ? 'primary' : 'link'
-)
+const buttonDanger = computed(() => !!visibleConfigStore.totalFormState[props._id])
 const props = defineProps<{ _id: string }>()
 const formState = visibleConfigStore.getFormState(props._id)
 type IFormStateListItem = {

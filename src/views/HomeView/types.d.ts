@@ -15,7 +15,7 @@ export interface IItemContentOther {
   span: number
 }
 export type IItemContent = IItem & IItemContentOther
-export type IConfigList = Omit<IItemContent, 'span'>
+export type IConfigList = IItem & { _id: string }
 export type IFormLayout = 'horizontal' | 'vertical' | 'inline'
 export type IActiveComponent = IItemContent | null
 
