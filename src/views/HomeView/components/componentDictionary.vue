@@ -21,7 +21,7 @@
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus'
 import type { IItem } from '../types'
-import { componentList } from '../constant'
+import { componentList } from '../constants'
 import { emitter } from '../mitt'
 import { useItemContent } from '../hooks'
 import { useDragFormStore } from '@/stores/dragForm'

@@ -1,6 +1,6 @@
 import { handleOn, getModelKey } from './utils'
 import { v4 as uuidv4 } from 'uuid'
-import { formConfigOptions, componentConfigOptions } from './constant'
+import { formConfigOptions, componentConfigOptions } from './constants'
 import { cloneDeep, get } from 'lodash-es'
 import type {
   IConfigList,
@@ -68,12 +68,24 @@ const handleConfigOptions = (
   const item = getOption(options as IConfigList, obj, path)
   return handleOn(item)
 }
+const getOptions = (options: IConfigOptions['options'], renderFormId: string) => {
+  const optionsClone = cloneDeep(options)
+  const { componentProps } = optionsClone
+  if (componentProps?.$id && renderFormId) {
+    Reflect.deleteProperty(componentProps, '$id')
+    componentProps.renderFormId = renderFormId
+  }
+  return {
+    ...optionsClone,
+    _id: uuidv4()
+  }
+}
 const getComponent = (optionList: IConfigOptions[], obj: Record<string, any>) => {
   return optionList
     .map((item) => {
       return handleConfigOptions(
         {
-          options: { ...item.options, _id: uuidv4() },
+          options: getOptions(item.options, obj._id),
           path: item.path
         },
         obj
@@ -93,15 +105,6 @@ export const useCompileConfigList = () => {
       configList.value = []
       return
     }
-    item.required = item.required ?? false
-    item.visible = item.visible ?? true
-    // 把表单id和配置项目对应 visibleConfig.vue
-    componentConfigOptions.forEach(({ options }) => {
-      if (!options.componentProps) {
-        options.componentProps = {}
-      }
-      options.componentProps._id = item._id
-    })
     configList.value = getComponent(componentConfigOptions, item)
   }
   return {
@@ -148,7 +151,12 @@ export const useGetItemContent = (
 
 export const useItemContent = (item: IItem, formState: IFormState, span = 24): IItemContent => {
   const uid = uuidv4()
-  return useGetItemContent(item, formState, { id: uid, _id: uid, span })
+  const itemClone = cloneDeep(item)
+  // 默认值
+  itemClone.required = itemClone.required ?? false
+  itemClone.visible = itemClone.visible ?? true
+
+  return useGetItemContent(itemClone, formState, { id: uid, _id: uid, span })
 }
 export const useItemContentByItemContent = (
   item: IItemContent,

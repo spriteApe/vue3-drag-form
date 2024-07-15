@@ -178,7 +178,10 @@ export const componentConfigOptions: IConfigOptions[] = [
   {
     options: {
       component: 'visibleConfig',
-      title: '隐藏条件'
+      title: '隐藏条件',
+      componentProps: {
+        $id: true
+      }
     },
     path: 'visible'
   },

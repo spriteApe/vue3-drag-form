@@ -29,9 +29,9 @@ import { useDragFormStore } from '@/stores/dragForm'
 const dragFormStore = useDragFormStore()
 const visibleConfigStore = useVisibleConfigStore()
 const open = ref<boolean>(false)
-const buttonDanger = computed(() => !!visibleConfigStore.totalFormState[props._id])
-const props = defineProps<{ _id: string }>()
-const formState = visibleConfigStore.getFormState(props._id)
+const buttonDanger = computed(() => !!visibleConfigStore.totalFormState[props.renderFormId])
+const props = defineProps<{ renderFormId: string }>()
+const formState = visibleConfigStore.getFormState(props.renderFormId)
 type IFormStateListItem = {
   key?: string
   value?: string | number
@@ -52,7 +52,7 @@ const handleOk = () => {
   open.value = false
   const formStateListFilterNull = filterNull(formStateList.value)
   visibleConfigStore.setFormState(
-    props._id,
+    props.renderFormId,
     formStateListFilterNull.reduce(
       (pre, cur) => {
         if (!cur.key) return pre
