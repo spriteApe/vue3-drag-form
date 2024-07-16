@@ -4,11 +4,19 @@
       <componentDictionary />
     </div>
     <div class="right flex-1 flex flex-col">
-      <div class="edit p-2">
+      <div class="edit flex p-2 gap-2">
         <a-button type="primary" @click="previewFormModalVisible = true">预览</a-button>
+        <previewFormModal v-model="previewFormModalVisible" />
         <a-button type="primary" @click="handleExport">导出</a-button>
         <a-button type="primary" @click="handleImport">导入</a-button>
-        <previewFormModal v-model="previewFormModalVisible" />
+        <a-popconfirm
+          title="清空后将不能恢复，确定要清空吗？"
+          ok-text="清空"
+          cancel-text="取消"
+          @confirm="handleClear"
+        >
+          <a-button type="primary" danger>清空</a-button>
+        </a-popconfirm>
       </div>
       <div class="flex-1 h-0">
         <renderForm />
@@ -49,6 +57,12 @@ const handleExport = () => {
 
 const handleImport = () => {
   uploadJson().then(dragFormStore.restByImport)
+}
+const handleClear = () => {
+  dragFormStore.restByImport({
+    ...dragFormStore.formProps,
+    schemas: []
+  })
 }
 </script>
 <style lang="scss" scoped></style>

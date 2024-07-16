@@ -24,7 +24,7 @@ watch(
   () => dragFormStore.activeComponent,
   (res) => {
     updateConfigList(res ?? undefined)
-    activeKey.value = '2'
+    activeKey.value = res ? '2' : '1'
   }
 )
 </script>
