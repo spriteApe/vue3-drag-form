@@ -38,6 +38,7 @@ import type { FormInstance } from 'ant-design-vue'
 import { v4 as uuidv4 } from 'uuid'
 import { useDragFormStore } from '@/stores/dragForm'
 import { isEmpty } from 'lodash-es'
+import type { IItemContent } from '../types'
 const dragFormStore = useDragFormStore()
 const props = withDefaults(
   defineProps<{
@@ -50,14 +51,28 @@ const props = withDefaults(
 const { formState: currentFormState, schemas } = dragFormStore.renderComponentGetData(
   props.isPreview
 )
-const showSchemas = computed(() => {
-  return schemas.value.filter((item) => {
-    if (!item.hideCondition || isEmpty(item.hideCondition)) return true
-    const hidden = Object.keys(item.hideCondition).every((key) => {
-      return item.hideCondition![key] === currentFormState[key]
+const getIndex = (array1: IItemContent[], array2: IItemContent[], id: string) => {
+  const array1Index = array1.findIndex((item) => item._id === id)
+  if (array1Index !== -1) return array1Index
+  return array2.findIndex((item) => item._id === id) // 隐藏的表单保持原来的位置
+}
+const showSchemas = computed({
+  get() {
+    return schemas.value.filter((item) => {
+      if (!item.hideCondition || isEmpty(item.hideCondition)) return true
+      const hidden = Object.keys(item.hideCondition).every((key) => {
+        return item.hideCondition![key] === currentFormState[key]
+      })
+      return !hidden
     })
-    return !hidden
-  })
+  },
+  set(value) {
+    schemas.value.sort((a, b) => {
+      const aIndex = getIndex(value, schemas.value, a._id)
+      const bIndex = getIndex(value, schemas.value, b._id)
+      return aIndex - bIndex
+    })
+  }
 })
 const onFinish = (values: any) => {
   console.log('Success:', values)
