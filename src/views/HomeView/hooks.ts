@@ -97,19 +97,15 @@ const handleConfigOptions = (
   const item = getOption(options as IConfigList, obj, path)
   return handleOn(item)
 }
-const getOptions = (options: IConfigOptions['options'], renderFormId: string) => {
-  const optionsClone = cloneDeep(options)
-  return {
-    ...optionsClone,
-    _id: uuidv4()
-  }
-}
 const getComponent = (optionList: IConfigOptions[], obj: Record<string, any>) => {
   return optionList
     .map((item) => {
       return handleConfigOptions(
         {
-          options: getOptions(item.options, obj._id),
+          options: {
+            ...item.options,
+            _id: uuidv4()
+          },
           path: item.path
         },
         obj
