@@ -1,24 +1,15 @@
 import type { IItem, IConfigOptions } from './types'
 export const componentList: IItem[] = [
-  {
-    title: '按钮',
-    component: 'a-button',
-    width: 200,
-    slot: '默认按钮',
-    componentProps: {
-      type: 'primary'
-    },
-    //     // 是否隐藏
-    //     hidden: false,
-    // // 组件显隐规则
-    // hiddenRules: [],
-    // // 是否必选
-    required: false
-    // // 必选提示
-    // message: "数据缺失",
-    // // 组件校验规则
-    // validateRules: []
-  },
+  // {
+  //   title: '按钮',
+  //   component: 'a-button',
+  //   width: 200,
+  //   slot: '默认按钮',
+  //   componentProps: {
+  //     type: 'primary'
+  //   },
+  //   required: false
+  // },
   {
     title: '输入框',
     component: 'a-input',
