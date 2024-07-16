@@ -2,8 +2,9 @@ export type IListens = Record<string, (...any: any[]) => void>
 export type IItem = {
   title: string
   component: string
-  required?: boolean
   visible?: boolean
+  required?: boolean
+  message?: string
   hideCondition?: Record<string, any>
   width?: number
   slot?: string
@@ -28,6 +29,6 @@ export interface IFormProps {
 export type IFormState = Record<string, any>
 export type IConfigOptions = {
   options: IItem | IConfigList
-  path: string
+  path: string | string[]
 }
 export type IExportAndImportJSON = IFormProps & { schemas: IItemContent[] }

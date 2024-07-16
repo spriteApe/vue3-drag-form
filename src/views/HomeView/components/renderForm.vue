@@ -71,7 +71,8 @@ const formRules = computed(() => {
   return schemas.value.reduce(
     (pre, cur) => {
       if (!cur.required) return pre
-      const message = cur.componentProps?.placeholder ?? '请完善' + cur.title
+      const message = cur.message || cur.componentProps?.placeholder || '请完善' + cur.title
+
       pre[cur._id] = [{ message, required: cur.required, trigger: 'change' }]
       return pre
     },

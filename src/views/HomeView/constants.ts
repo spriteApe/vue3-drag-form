@@ -126,10 +126,10 @@ export const componentConfigOptions: IConfigOptions[] = [
   },
   {
     options: {
-      component: 'a-switch',
+      component: 'requiredConfig',
       title: '必填'
     },
-    path: 'required'
+    path: ['required', 'message']
   },
   {
     options: {

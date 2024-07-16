@@ -35,27 +35,50 @@ function toNestedRef(obj: Record<string, any>, path: string) {
 const getOption = <T extends IConfigList = IConfigList>(
   option: T,
   obj: Record<string, any>,
-  key: string
+  key: string | string[]
 ): T => {
-  const dataRef = toNestedRef(obj, key)
-  const { component, componentProps = {}, on = {} } = option
-  const modelKey = getModelKey(component)
-  const updateModelKey = 'update:' + modelKey
-  return {
-    ...option,
-    componentProps: {
-      ...componentProps,
-      [modelKey]: dataRef
-    },
-    on: {
-      ...on,
-      [updateModelKey]: (val: number | string) => {
+  if (typeof key === 'string') {
+    const dataRef = toNestedRef(obj, key)
+    const { component, componentProps = {}, on = {} } = option
+    const modelKey = getModelKey(component)
+    const updateModelKey = 'update:' + modelKey
+    return {
+      ...option,
+      componentProps: {
+        ...componentProps,
+        [modelKey]: dataRef
+      },
+      on: {
+        ...on,
+        [updateModelKey]: (val: number | string) => {
+          dataRef.value = val
+          if (option.on?.[updateModelKey]) {
+            option.on[updateModelKey](val)
+          }
+        }
+      }
+    }
+  } else {
+    const result = cloneDeep(option)
+    key.forEach((item) => {
+      const dataRef = toNestedRef(obj, item)
+      const modelKey = item.split('.').pop()!
+      const updateModelKey = 'update:' + modelKey
+      if (!result.componentProps) {
+        result.componentProps = {}
+      }
+      result.componentProps[modelKey] = dataRef
+      if (!result.on) {
+        result.on = {}
+      }
+      result.on[updateModelKey] = (val: number | string) => {
         dataRef.value = val
         if (option.on?.[updateModelKey]) {
           option.on[updateModelKey](val)
         }
       }
-    }
+    })
+    return result
   }
 }
 const handleConfigOptions = (
@@ -64,7 +87,13 @@ const handleConfigOptions = (
   ignoreNull = true
 ) => {
   const { options, path } = configOptions
-  if (get(obj, path) === undefined && ignoreNull) return
+  if (typeof path === 'string') {
+    if (get(obj, path) === undefined && ignoreNull) return
+  } else {
+    for (const item of path) {
+      if (get(obj, item) === undefined && ignoreNull) return
+    }
+  }
   const item = getOption(options as IConfigList, obj, path)
   return handleOn(item)
 }
@@ -151,6 +180,7 @@ export const useItemContent = (item: IItem, formState: IFormState, span = 24): I
   itemClone.required = itemClone.required ?? false
   itemClone.visible = itemClone.visible ?? true
   itemClone.hideCondition = itemClone.hideCondition ?? {}
+  itemClone.message = itemClone.message ?? ''
 
   return useGetItemContent(itemClone, formState, { id: uid, _id: uid, span })
 }
