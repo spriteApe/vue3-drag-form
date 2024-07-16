@@ -35,13 +35,15 @@ export const useDragFormStore = defineStore('dragForm', () => {
       schemas: schemasJson,
       labelCol: { span: labelColSpan },
       wrapperCol: { span: wrapperColSpan },
-      layout
+      layout,
+      labelAlign
     } = res
     Reflect.deleteProperty(res, 'schemas')
     // Object.assign(formProps, res) //不能这样,会导致响应式丢失
     formProps.labelCol.span = labelColSpan
     formProps.wrapperCol.span = wrapperColSpan
     formProps.layout = layout
+    formProps.labelAlign = labelAlign
     const result = schemasJson.map((options) => {
       return useItemContentByItemContent(options, formState)
     })

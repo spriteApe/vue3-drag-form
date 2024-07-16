@@ -10,10 +10,12 @@ import 'ant-design-vue/dist/reset.css'
 import optionDataConfig from '@/components/optionDataConfig.vue'
 import visibleConfig from '@/components/visibleConfig.vue'
 import requiredConfig from '@/components/requiredConfig.vue'
+import formLabelConfig from '@/components/formLabelConfig.vue'
 const app = createApp(App)
 app.component('optionDataConfig', optionDataConfig)
 app.component('visibleConfig', visibleConfig)
 app.component('requiredConfig', requiredConfig)
+app.component('formLabelConfig', formLabelConfig)
 app.use(createPinia())
 app.use(router)
 app.use(Antd)

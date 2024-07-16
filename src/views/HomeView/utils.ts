@@ -1,5 +1,6 @@
 import type { IListens, IItem, IFormProps, IExportAndImportJSON } from './types'
 import { omit } from 'lodash-es'
+import { EFormLabelAlign, EFormLayout } from './types'
 export const handleOn = <T extends IItem = IItem>(item: T) => {
   const { componentProps = {}, on = {} } = item
   const listens = Object.keys(on).reduce((pre, key) => {
@@ -20,7 +21,8 @@ export const handleOn = <T extends IItem = IItem>(item: T) => {
 export const getInitFormProps = (): IFormProps => ({
   labelCol: { span: 8 },
   wrapperCol: { span: 16 },
-  layout: 'horizontal'
+  layout: EFormLayout['HORIZONTAL'],
+  labelAlign: EFormLabelAlign['RIGHT']
 })
 
 export const getModelKey = (component: string) => {

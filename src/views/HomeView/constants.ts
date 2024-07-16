@@ -70,26 +70,10 @@ export const formConfigOptions: IConfigOptions[] = [
   },
   {
     options: {
-      component: 'a-select',
-      title: 'layout',
-      componentProps: {
-        options: [
-          {
-            value: 'horizontal',
-            label: 'horizontal'
-          },
-          {
-            value: 'vertical',
-            label: 'vertical'
-          },
-          {
-            value: 'inline',
-            label: 'inline'
-          }
-        ]
-      }
+      component: 'formLabelConfig',
+      title: '标签的位置'
     },
-    path: 'layout'
+    path: ['layout', 'labelAlign']
   }
 ]
 export const componentConfigOptions: IConfigOptions[] = [

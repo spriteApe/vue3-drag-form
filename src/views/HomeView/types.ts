@@ -18,13 +18,22 @@ export interface IItemContentOther {
 }
 export type IItemContent = IItem & IItemContentOther
 export type IConfigList = IItem & { _id: string }
-export type IFormLayout = 'horizontal' | 'vertical' | 'inline'
+export enum EFormLayout {
+  HORIZONTAL = 'horizontal',
+  VERTICAL = 'vertical',
+  INLINE = 'inline'
+}
+export enum EFormLabelAlign {
+  LEFT = 'left',
+  RIGHT = 'right'
+}
 export type IActiveComponent = IItemContent | null
 
 export interface IFormProps {
   labelCol: { span: number }
   wrapperCol: { span: number }
-  layout: IFormLayout
+  layout: EFormLayout
+  labelAlign: EFormLabelAlign
 }
 export type IFormState = Record<string, any>
 export type IConfigOptions = {
