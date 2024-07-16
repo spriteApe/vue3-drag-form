@@ -15,7 +15,6 @@
 </template>
 <script lang="ts" setup>
 import type { IItemContent } from '../types'
-import { emitter } from '../mitt'
 import { useItemContent } from '../hooks'
 import { CopyOutlined, DeleteOutlined } from '@ant-design/icons-vue'
 import { useDragFormStore } from '@/stores/dragForm'
@@ -34,14 +33,12 @@ const { formState, schemas } = dragFormStore.renderComponentGetData(props.isPrev
 const updateConfigList = (item?: IItemContent) => {
   if (dragFormStore.activeComponent === item) return
   dragFormStore.activeComponent = item ?? null
-  emitter.emit('update:configList', item)
 }
 const activeVisible = computed(() => dragFormStore.activeComponent === props.item)
 const copyItem = () => {
   const currentIndex = schemas.value.findIndex((item) => item === props.item)
   if (currentIndex === -1) return
   const itemContent = useItemContent(props.item, formState, props.item.span)
-  updateConfigList(itemContent)
   schemas.value.splice(currentIndex + 1, 0, itemContent)
 }
 const deleteItem = () => {
@@ -54,8 +51,9 @@ const deleteItem = () => {
 <style lang="scss" scoped>
 .editComponent {
   @apply relative cursor-pointer h-full;
+  border: 1px solid transparent;
   &--active {
-    border: 1px solid red;
+    border-color: red;
   }
 }
 </style>

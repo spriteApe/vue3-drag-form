@@ -14,16 +14,18 @@
 </template>
 <script lang="ts" setup>
 import { useCompileFormConfigList, useCompileConfigList } from '../hooks'
-import { emitter } from '../mitt'
 import dynamicRenderingComponent from './dynamicRenderingComponent.vue'
 import { useDragFormStore } from '@/stores/dragForm'
 const dragFormStore = useDragFormStore()
 const activeKey = ref('1')
 const formConfigList = useCompileFormConfigList(dragFormStore.formProps)
 const { configList, updateConfigList } = useCompileConfigList()
-emitter.on('update:configList', (res) => {
-  updateConfigList(res)
-  activeKey.value = '2'
-})
+watch(
+  () => dragFormStore.activeComponent,
+  (res) => {
+    updateConfigList(res ?? undefined)
+    activeKey.value = '2'
+  }
+)
 </script>
 <style lang="scss" scoped></style>
