@@ -70,11 +70,6 @@ const handleConfigOptions = (
 }
 const getOptions = (options: IConfigOptions['options'], renderFormId: string) => {
   const optionsClone = cloneDeep(options)
-  const { componentProps } = optionsClone
-  if (componentProps?.$id && renderFormId) {
-    Reflect.deleteProperty(componentProps, '$id')
-    componentProps.renderFormId = renderFormId
-  }
   return {
     ...optionsClone,
     _id: uuidv4()
@@ -155,6 +150,7 @@ export const useItemContent = (item: IItem, formState: IFormState, span = 24): I
   // 默认值
   itemClone.required = itemClone.required ?? false
   itemClone.visible = itemClone.visible ?? true
+  itemClone.hideCondition = itemClone.hideCondition ?? {}
 
   return useGetItemContent(itemClone, formState, { id: uid, _id: uid, span })
 }

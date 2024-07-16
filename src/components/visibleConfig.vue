@@ -22,25 +22,24 @@
 </template>
 <script lang="ts" setup>
 import { useGetItemContent } from '@/views/HomeView/hooks'
-import { emitter } from '@/views/HomeView/mitt'
 import dynamicRenderingComponent from '@/views/HomeView/components/dynamicRenderingComponent.vue'
-import { useVisibleConfigStore } from '@/stores/visibleConfig'
 import { useDragFormStore } from '@/stores/dragForm'
+import { isEmpty } from 'lodash-es'
 const dragFormStore = useDragFormStore()
-const visibleConfigStore = useVisibleConfigStore()
+const hideCondition = defineModel<Record<string, any>>('value', {
+  required: true
+})
 const open = ref<boolean>(false)
-const buttonDanger = computed(() => !!visibleConfigStore.totalFormState[props.renderFormId])
-const props = defineProps<{ renderFormId: string }>()
-const formState = visibleConfigStore.getFormState(props.renderFormId)
+const buttonDanger = computed(() => !isEmpty(hideCondition.value))
 type IFormStateListItem = {
   key?: string
   value?: string | number
 }
 const getFormStateList = (): IFormStateListItem[] => {
-  const res = Object.keys(formState).map((key) => {
+  const res = Object.keys(hideCondition.value).map((key) => {
     return {
       key,
-      value: formState[key]
+      value: hideCondition.value[key]
     }
   })
   if (res.length === 0) return [{}]
@@ -51,18 +50,14 @@ const filterNull = (list: IFormStateListItem[]) => list.filter((item) => item.va
 const handleOk = () => {
   open.value = false
   const formStateListFilterNull = filterNull(formStateList.value)
-  visibleConfigStore.setFormState(
-    props.renderFormId,
-    formStateListFilterNull.reduce(
-      (pre, cur) => {
-        if (!cur.key) return pre
-        pre[cur.key] = cur.value
-        return pre
-      },
-      {} as Record<string, any>
-    )
+  hideCondition.value = formStateListFilterNull.reduce(
+    (pre, cur) => {
+      if (!cur.key) return pre
+      pre[cur.key] = cur.value
+      return pre
+    },
+    {} as Record<string, any>
   )
-  emitter.emit('check-visible') //立即更新一次
 }
 const renderItem = (options: IFormStateListItem) => {
   if (!options.key) return

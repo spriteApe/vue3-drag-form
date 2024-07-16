@@ -37,8 +37,7 @@ import type { Rule } from 'ant-design-vue/es/form'
 import type { FormInstance } from 'ant-design-vue'
 import { v4 as uuidv4 } from 'uuid'
 import { useDragFormStore } from '@/stores/dragForm'
-import { useVisibleConfigStore } from '@/stores/visibleConfig'
-import { emitter } from '../mitt'
+import { isEmpty } from 'lodash-es'
 const dragFormStore = useDragFormStore()
 const props = withDefaults(
   defineProps<{
@@ -51,20 +50,15 @@ const props = withDefaults(
 const { formState: currentFormState, schemas } = dragFormStore.renderComponentGetData(
   props.isPreview
 )
-const visibleConfigStore = useVisibleConfigStore()
-const handleVisible = () => {
-  Object.keys(visibleConfigStore.totalFormState).forEach((key) => {
-    const formState = visibleConfigStore.totalFormState[key]
-    const hidden = Object.keys(formState).every((key) => {
-      return formState[key] === currentFormState[key]
+const showSchemas = computed(() => {
+  return schemas.value.filter((item) => {
+    if (!item.hideCondition || isEmpty(item.hideCondition)) return true
+    const hidden = Object.keys(item.hideCondition).every((key) => {
+      return item.hideCondition![key] === currentFormState[key]
     })
-    const thatOne = schemas.value.find((item) => item._id === key)
-    if (!thatOne) return
-    thatOne.visible = !hidden
+    return !hidden
   })
-}
-emitter.on('check-visible', handleVisible)
-watch(currentFormState, handleVisible)
+})
 const onFinish = (values: any) => {
   console.log('Success:', values)
 }
@@ -73,7 +67,6 @@ defineExpose({
   formRef: formRef
 })
 const formName = 'formName' + uuidv4()
-const showSchemas = computed(() => schemas.value.filter((item) => item.visible))
 const formRules = computed(() => {
   return schemas.value.reduce(
     (pre, cur) => {

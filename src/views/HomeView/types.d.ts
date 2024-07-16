@@ -4,6 +4,7 @@ export type IItem = {
   component: string
   required?: boolean
   visible?: boolean
+  hideCondition?: Record<string, any>
   width?: number
   slot?: string
   componentProps?: Record<string, any>
