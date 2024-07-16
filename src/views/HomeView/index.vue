@@ -24,7 +24,6 @@ import componentDictionary from './components/componentDictionary.vue'
 import renderForm from './components/renderForm.vue'
 import optionConfig from './components/optionConfig.vue'
 import previewFormModal from './components/previewFormModal.vue'
-import { useItemContentByItemContent } from './hooks'
 import { getModelKey, uploadJson, downloadJson } from './utils'
 import { cloneDeep } from 'lodash-es'
 import { useDragFormStore } from '@/stores/dragForm'
@@ -49,23 +48,7 @@ const handleExport = () => {
 }
 
 const handleImport = () => {
-  uploadJson().then((res) => {
-    const {
-      schemas: schemasJson,
-      labelCol: { span: labelColSpan },
-      wrapperCol: { span: wrapperColSpan },
-      layout
-    } = res
-    Reflect.deleteProperty(res, 'schemas')
-    // Object.assign(dragFormStore.formProps, res) //不能这样,会导致响应式丢失
-    dragFormStore.formProps.labelCol.span = labelColSpan
-    dragFormStore.formProps.wrapperCol.span = wrapperColSpan
-    dragFormStore.formProps.layout = layout
-    const result = schemasJson.map((options) => {
-      return useItemContentByItemContent(options, dragFormStore.formState)
-    })
-    dragFormStore.schemas = result
-  })
+  uploadJson().then(dragFormStore.restByImport)
 }
 </script>
 <style lang="scss" scoped></style>
