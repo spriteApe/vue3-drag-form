@@ -28,6 +28,7 @@ const dragFormStore = useDragFormStore()
 
 function clone(element: IItem) {
   const itemContent = useItemContent(element, dragFormStore.formState)
+  dragFormStore.schemas.push(itemContent)
   return itemContent
 }
 const addComponent = (item: IItem) => {
