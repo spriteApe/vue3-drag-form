@@ -18,7 +18,12 @@
         ghostClass="ghost"
         class="w-full flex flex-wrap"
       >
-        <a-col :span="item.span" v-for="item in showSchemas" :key="item._id">
+        <a-col
+          :span="item.span"
+          v-for="item in showSchemas"
+          :key="item._id"
+          class="overflow-hidden"
+        >
           <editComponent :item :isPreview>
             <a-form-item
               :label="item.symbols ? item.title : null"
