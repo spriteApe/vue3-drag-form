@@ -87,6 +87,10 @@ const handleConfigOptions = (
   ignoreNull = true
 ) => {
   const { options, path } = configOptions
+  if (!options.symbols && !ignoreNull) {
+    console.log(options)
+    return options
+  }
   if (typeof path === 'string') {
     if (get(obj, path) === undefined && ignoreNull) return
   } else {

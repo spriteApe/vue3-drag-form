@@ -10,6 +10,7 @@ export type IItem = {
   width?: number
   slot?: string
   componentProps?: Record<string, any>
+  symbols?: ESymbols[]
   on?: IListens
 }
 export interface IItemContentOther {
@@ -42,3 +43,16 @@ export type IConfigOptions = {
   path: string | string[]
 }
 export type IExportAndImportJSON = IFormProps & { schemas: IItemContent[] }
+
+export enum ESymbols {
+  EQUAL = '=',
+  NOT_EQUAL = '!=',
+  GREATER_THAN = '>',
+  GREATER_THAN_EQUAL = '>=',
+  LESS_THAN = '<',
+  LESS_THAN_EQUAL = '<=',
+  CONTAIN = 'contain',
+  NOT_CONTAIN = '!contain',
+  EMPTY = 'empty',
+  NOT_EMPTY = '!empty'
+}

@@ -1,15 +1,17 @@
 import type { IItem, IConfigOptions } from './types'
+import { ESymbols } from './types'
+
 export const componentList: IItem[] = [
-  // {
-  //   title: '按钮',
-  //   component: 'a-button',
-  //   width: 200,
-  //   slot: '默认按钮',
-  //   componentProps: {
-  //     type: 'primary'
-  //   },
-  //   required: false
-  // },
+  {
+    title: '按钮',
+    component: 'a-button',
+    width: 200,
+    slot: '默认按钮',
+    componentProps: {
+      type: 'primary'
+    },
+    required: false
+  },
   {
     title: '输入框',
     component: 'a-input',
@@ -17,21 +19,40 @@ export const componentList: IItem[] = [
     componentProps: {
       placeholder: '请输入内容',
       showCount: true
-    }
+    },
+    symbols: [
+      ESymbols['EQUAL'],
+      ESymbols['NOT_EQUAL'],
+      ESymbols['CONTAIN'],
+      ESymbols['NOT_CONTAIN'],
+      ESymbols['EMPTY'],
+      ESymbols['NOT_EMPTY']
+    ]
   },
   {
     title: '数字输入框',
     component: 'a-input-number',
     componentProps: {
       placeholder: '请输入'
-    }
+    },
+    symbols: [
+      ESymbols['EQUAL'],
+      ESymbols['NOT_EQUAL'],
+      ESymbols['GREATER_THAN'],
+      ESymbols['GREATER_THAN_EQUAL'],
+      ESymbols['LESS_THAN'],
+      ESymbols['LESS_THAN_EQUAL'],
+      ESymbols['EMPTY'],
+      ESymbols['NOT_EMPTY']
+    ]
   },
   {
     title: '开关',
     component: 'a-switch',
     componentProps: {
       checked: true
-    }
+    },
+    symbols: [ESymbols['EQUAL'], ESymbols['NOT_EQUAL']]
   },
   {
     title: '选择器',
@@ -48,7 +69,15 @@ export const componentList: IItem[] = [
           label: 'Lucy'
         }
       ]
-    }
+    },
+    symbols: [
+      ESymbols['EQUAL'],
+      ESymbols['NOT_EQUAL'],
+      ESymbols['CONTAIN'],
+      ESymbols['NOT_CONTAIN'],
+      ESymbols['EMPTY'],
+      ESymbols['NOT_EMPTY']
+    ]
   }
 ]
 

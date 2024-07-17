@@ -20,7 +20,7 @@
       >
         <a-col :span="item.span" v-for="item in showSchemas" :key="item._id">
           <editComponent :item :isPreview>
-            <a-form-item :label="item.title" :name="item._id">
+            <a-form-item :label="item.title" :name="item.symbols ? item._id : null">
               <dynamicRenderingComponent :item />
             </a-form-item>
           </editComponent>
