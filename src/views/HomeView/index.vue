@@ -5,8 +5,10 @@
     </div>
     <div class="right flex-1 flex flex-col">
       <div class="edit flex p-2 gap-2">
-        <a-button type="primary" @click="previewFormModalVisible = true">预览</a-button>
-        <previewFormModal v-model="previewFormModalVisible" />
+        <a-button type="primary" @click="dragFormStore.previewFormModalVisible = true"
+          >预览</a-button
+        >
+        <previewFormModal v-model="dragFormStore.previewFormModalVisible" />
         <a-button type="primary" @click="handleExport">导出</a-button>
         <a-button type="primary" @click="handleImport">导入</a-button>
         <a-popconfirm
@@ -36,8 +38,6 @@ import { getModelKey, uploadJson, downloadJson } from './utils'
 import { cloneDeep } from 'lodash-es'
 import { useDragFormStore } from '@/stores/dragForm'
 const dragFormStore = useDragFormStore()
-
-const previewFormModalVisible = ref(false)
 
 const handleExport = () => {
   const schemasClone = cloneDeep(dragFormStore.schemas)

@@ -14,7 +14,8 @@ export const useDragFormStore = defineStore('dragForm', () => {
   const activeComponent = ref<IActiveComponent>(null)
 
   const formStatePreview = reactive<IFormState>({})
-  const newSchemas = usePreviewSchemas(schemas, formStatePreview)
+  const previewFormModalVisible = ref(false)
+  const newSchemas = usePreviewSchemas(schemas, formStatePreview, previewFormModalVisible)
 
   const renderComponentGetData = (isPreview: boolean) =>
     isPreview
@@ -60,6 +61,7 @@ export const useDragFormStore = defineStore('dragForm', () => {
     activeComponent,
     formStatePreview,
     newSchemas,
+    previewFormModalVisible,
     renderComponentGetData,
     restByImport
   }

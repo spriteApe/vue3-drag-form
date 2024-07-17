@@ -137,22 +137,20 @@ export const useCompileConfigList = () => {
   }
 }
 type ISchemasRef = Ref<IItemContent[]>
-export const usePreviewSchemas = (schemas: ISchemasRef, formState: IFormState) => {
+export const usePreviewSchemas = (
+  schemas: ISchemasRef,
+  formState: IFormState,
+  previewFormModalVisible: Ref<boolean>
+) => {
   const newSchemas = ref<IItemContent[]>([])
-  watch(
-    schemas,
-    (data) => {
-      newSchemas.value = data.map((item) => {
-        Reflect.deleteProperty(item, 'on') //相关的事件删除 避免影响最外层的formState
-        const itemContent = useItemContentByItemContent(item, formState)
-        return itemContent
-      })
-    },
-    {
-      immediate: true,
-      deep: true
-    }
-  )
+  watch(previewFormModalVisible, (val) => {
+    if (!val) return
+    newSchemas.value = schemas.value.map((item) => {
+      Reflect.deleteProperty(item, 'on') //相关的事件删除 避免影响最外层的formState
+      const itemContent = useItemContentByItemContent(item, formState)
+      return itemContent
+    })
+  })
   return newSchemas
 }
 
