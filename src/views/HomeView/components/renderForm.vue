@@ -38,7 +38,9 @@ import type { FormInstance } from 'ant-design-vue'
 import { v4 as uuidv4 } from 'uuid'
 import { useDragFormStore } from '@/stores/dragForm'
 import { isEmpty } from 'lodash-es'
-import type { IItemContent } from '../types'
+import type { IItemContent, IFormState } from '../types'
+import type { IRight, ICondition } from '@/components/visibleConfig/types'
+import { ECondition, ESymbol, EType } from '@/components/visibleConfig/types'
 const dragFormStore = useDragFormStore()
 const props = withDefaults(
   defineProps<{
@@ -56,15 +58,41 @@ const getIndex = (array1: IItemContent[], array2: IItemContent[], id: string) =>
   if (array1Index !== -1) return array1Index
   return array2.findIndex((item) => item._id === id) // 隐藏的表单保持原来的位置
 }
+const getSchemas = (schemas: IItemContent[], formState: IFormState) => {
+  if (isEmpty(formState)) return schemas
+  return schemas.filter((item) => !matchCondition(formState, item.hideCondition))
+}
+
+const matchCondition = (formState: Record<string, any>, condition?: ICondition): boolean => {
+  // Helper function to match individual conditions
+  const matchSingleCondition = (right: IRight): boolean => {
+    if (right.type === EType['CONDITION_GROUP']) {
+      return matchCondition(formState, right.conditionGroup)
+    }
+    if (!right.formId) return false
+    const formValue = formState[right.formId]
+
+    switch (right.symbol) {
+      case ESymbol.EQUAL_TO:
+        return formValue === right.value
+      case ESymbol.NOT_EQUAL_TO:
+        return formValue !== right.value
+      default:
+        return false
+    }
+  }
+  if (isEmpty(condition)) return false
+
+  // Check all right conditions
+  if (condition.left === ECondition.AND) {
+    return condition.right!.every(matchSingleCondition)
+  } else {
+    return condition.right!.some(matchSingleCondition)
+  }
+}
 const showSchemas = computed({
   get() {
-    return schemas.value.filter((item) => {
-      if (!item.hideCondition || isEmpty(item.hideCondition)) return true
-      const hidden = Object.keys(item.hideCondition).every((key) => {
-        return item.hideCondition![key] === currentFormState[key]
-      })
-      return !hidden
-    })
+    return getSchemas(schemas.value, currentFormState)
   },
   set(value) {
     schemas.value.sort((a, b) => {

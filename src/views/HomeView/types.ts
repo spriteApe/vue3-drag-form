@@ -1,3 +1,5 @@
+import type { ICondition } from '@/components/visibleConfig/types'
+
 export type IListens = Record<string, (...any: any[]) => void>
 export type IItem = {
   title: string
@@ -5,7 +7,7 @@ export type IItem = {
   visible?: boolean
   required?: boolean
   message?: string
-  hideCondition?: Record<string, any>
+  hideCondition?: ICondition
   width?: number
   slot?: string
   componentProps?: Record<string, any>
