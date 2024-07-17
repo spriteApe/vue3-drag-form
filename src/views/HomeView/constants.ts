@@ -1,5 +1,5 @@
 import type { IItem, IConfigOptions } from './types'
-import { ESymbols } from './types'
+import { ESymbols } from '@/components/visibleConfig/types'
 
 export const componentList: IItem[] = [
   {

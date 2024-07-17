@@ -40,7 +40,7 @@ import { useDragFormStore } from '@/stores/dragForm'
 import { isEmpty } from 'lodash-es'
 import type { IItemContent, IFormState } from '../types'
 import type { IRight, ICondition } from '@/components/visibleConfig/types'
-import { ECondition, ESymbol, EType } from '@/components/visibleConfig/types'
+import { ECondition, ESymbols, EType } from '@/components/visibleConfig/types'
 const dragFormStore = useDragFormStore()
 const props = withDefaults(
   defineProps<{
@@ -73,10 +73,26 @@ const matchCondition = (formState: Record<string, any>, condition?: ICondition):
     const formValue = formState[right.formId]
 
     switch (right.symbol) {
-      case ESymbol.EQUAL_TO:
+      case ESymbols.EQUAL:
         return formValue === right.value
-      case ESymbol.NOT_EQUAL_TO:
+      case ESymbols.NOT_EQUAL:
         return formValue !== right.value
+      case ESymbols.GREATER_THAN:
+        return formValue > right.value
+      case ESymbols.GREATER_THAN_EQUAL:
+        return formValue >= right.value
+      case ESymbols.LESS_THAN:
+        return formValue < right.value
+      case ESymbols.LESS_THAN_EQUAL:
+        return formValue <= right.value
+      case ESymbols.CONTAIN:
+        return formValue.includes(right.value)
+      case ESymbols.NOT_CONTAIN:
+        return !formValue.includes(right.value)
+      case ESymbols.EMPTY:
+        return isEmpty(formValue)
+      case ESymbols.NOT_EMPTY:
+        return !isEmpty(formValue)
       default:
         return false
     }

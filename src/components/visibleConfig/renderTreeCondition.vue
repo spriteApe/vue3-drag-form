@@ -15,17 +15,31 @@
             v-model:value="item.formId"
             style="width: 120px"
             :options="getOptions(condition.right, item.formId)"
-            @change="() => (item.value = undefined)"
+            @change="
+              () => {
+                item.symbol = undefined
+                item.value = undefined
+              }
+            "
             placeholder="关联表单"
           ></a-select>
           <a-select
+            v-if="item.formId"
             v-model:value="item.symbol"
             style="width: 120px"
             class="mx-4"
-            :options="symbolSelectOptions"
+            :options="getSymbolOptions(item.formId)"
             placeholder="关联关系"
+            @change="
+              () => {
+                item.value = undefined
+              }
+            "
           ></a-select>
-          <div class="flex-1">
+          <div
+            class="flex-1"
+            v-if="item.symbol && ![ESymbols.EMPTY, ESymbols.NOT_EMPTY].includes(item.symbol!)"
+          >
             <dynamicRenderingComponent :item="renderItem(item)!" v-if="renderItem(item)" />
           </div>
           <span class="mx-4 c-red cursor-pointer" @click="delFormStateList(condition.right, inx)">
@@ -43,9 +57,10 @@
 </template>
 <script lang="ts" setup>
 import type { ICondition, IRight } from './types'
-import { ECondition, EType, ESymbol } from './types'
+import { ECondition, EType, symbolSelectOptions, ESymbols } from './types'
 import { useDragFormStore } from '@/stores/dragForm'
 import { useGetItemContent } from '@/views/HomeView/hooks'
+import { componentList } from '@/views/HomeView/constants'
 import dynamicRenderingComponent from '@/views/HomeView/components/dynamicRenderingComponent.vue'
 import { getCondition, getConditionGroup } from './utils'
 const dragFormStore = useDragFormStore()
@@ -61,17 +76,14 @@ const conditionSelectOptions = [
   }
 ]
 
-const symbolSelectOptions = [
-  {
-    label: '等于',
-    value: ESymbol['EQUAL_TO']
-  },
-  {
-    label: '不等于',
-    value: ESymbol['NOT_EQUAL_TO']
-  }
-]
-
+const getSymbolOptions = (formId?: string) => {
+  if (!formId) return []
+  const thatSchema = dragFormStore.schemas.find((item) => item._id === formId)
+  if (!thatSchema) return []
+  const thatComponent = componentList.find((item) => item.component === thatSchema.component)
+  if (!thatComponent?.symbols) return []
+  return symbolSelectOptions.filter((item) => thatComponent.symbols!.includes(item.value))
+}
 const props = defineProps<{
   condition: ICondition
 }>()

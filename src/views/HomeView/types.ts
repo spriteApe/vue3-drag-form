@@ -1,4 +1,4 @@
-import type { ICondition } from '@/components/visibleConfig/types'
+import type { ICondition, ESymbols } from '@/components/visibleConfig/types'
 
 export type IListens = Record<string, (...any: any[]) => void>
 export type IItem = {
@@ -43,16 +43,3 @@ export type IConfigOptions = {
   path: string | string[]
 }
 export type IExportAndImportJSON = IFormProps & { schemas: IItemContent[] }
-
-export enum ESymbols {
-  EQUAL = '=',
-  NOT_EQUAL = '!=',
-  GREATER_THAN = '>',
-  GREATER_THAN_EQUAL = '>=',
-  LESS_THAN = '<',
-  LESS_THAN_EQUAL = '<=',
-  CONTAIN = 'contain',
-  NOT_CONTAIN = '!contain',
-  EMPTY = 'empty',
-  NOT_EMPTY = '!empty'
-}
