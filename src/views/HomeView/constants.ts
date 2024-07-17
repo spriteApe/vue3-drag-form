@@ -10,6 +10,7 @@ export const componentList: IItem[] = [
     componentProps: {
       type: 'primary'
     },
+    icon: 'carbon:button-centered',
     required: false
   },
   {
@@ -20,6 +21,7 @@ export const componentList: IItem[] = [
       placeholder: '请输入内容',
       showCount: true
     },
+    icon: 'carbon:string-text',
     symbols: [
       ESymbols['EQUAL'],
       ESymbols['NOT_EQUAL'],
@@ -32,6 +34,7 @@ export const componentList: IItem[] = [
   {
     title: '数字输入框',
     component: 'a-input-number',
+    icon: 'carbon:character-whole-number',
     componentProps: {
       placeholder: '请输入'
     },
@@ -49,6 +52,7 @@ export const componentList: IItem[] = [
   {
     title: '开关',
     component: 'a-switch',
+    icon: 'carbon:cut-in-half',
     componentProps: {
       checked: true
     },
@@ -57,6 +61,7 @@ export const componentList: IItem[] = [
   {
     title: '选择器',
     component: 'a-select',
+    icon: 'carbon:partition-same',
     componentProps: {
       placeholder: '请选择内容',
       options: [

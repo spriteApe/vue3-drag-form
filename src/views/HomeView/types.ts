@@ -11,6 +11,7 @@ export type IItem = {
   slot?: string
   componentProps?: Record<string, any>
   symbols?: ESymbols[]
+  icon?: string
   on?: IListens
 }
 export interface IItemContentOther {

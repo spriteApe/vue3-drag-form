@@ -1,22 +1,27 @@
 <template>
-  <VueDraggable
-    class="flex flex-col gap-2 p-4 w-300px h-full m-auto bg-gray-500/5 rounded overflow-auto"
-    v-model="componentList"
-    :animation="150"
-    ghostClass="ghost"
-    :clone="clone"
-    :sort="false"
-    :group="{ name: 'people', pull: 'clone', put: false }"
-  >
-    <div
-      v-for="item in componentList"
-      :key="item.component"
-      class="cursor-move h-30 bg-gray-500/5 rounded p-3"
-      @click="addComponent(item)"
+  <div class="h-full overflow-auto bg-gray-500/5">
+    <VueDraggable
+      class="grid grid-cols-3 gap-2 p-4 w-300px rounded"
+      v-model="componentList"
+      :animation="150"
+      ghostClass="ghost"
+      :clone="clone"
+      :sort="false"
+      :group="{ name: 'people', pull: 'clone', put: false }"
     >
-      {{ item.title }}
-    </div>
-  </VueDraggable>
+      <div
+        v-for="item in componentList"
+        :key="item.component"
+        class="cursor-move h-20 bg-gray-500/5 rounded flex flex-col justify-evenly items-center"
+        @click="addComponent(item)"
+      >
+        <Icon :icon="item.icon!" v-if="item.icon" />
+        <span class="text-sm">
+          {{ item.title }}
+        </span>
+      </div>
+    </VueDraggable>
+  </div>
 </template>
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus'
@@ -24,6 +29,7 @@ import type { IItem } from '../types'
 import { componentList } from '../constants'
 import { useItemContent } from '../hooks'
 import { useDragFormStore } from '@/stores/dragForm'
+import { Icon } from '@iconify/vue'
 const dragFormStore = useDragFormStore()
 
 function clone(element: IItem) {
