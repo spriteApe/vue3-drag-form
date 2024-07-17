@@ -87,10 +87,7 @@ const handleConfigOptions = (
   ignoreNull = true
 ) => {
   const { options, path } = configOptions
-  if (!options.symbols && !ignoreNull) {
-    console.log(options)
-    return options
-  }
+  if (!options.symbols && !ignoreNull) return options
   if (typeof path === 'string') {
     if (get(obj, path) === undefined && ignoreNull) return
   } else {
@@ -147,8 +144,8 @@ export const usePreviewSchemas = (
     if (!val) return
     newSchemas.value = schemas.value.map((item) => {
       Reflect.deleteProperty(item, 'on') //相关的事件删除 避免影响最外层的formState
-      const itemContent = useItemContentByItemContent(item, formState)
-      return itemContent
+      const itemContent = handleConfigOptions({ options: item, path: item._id }, formState, false)
+      return itemContent as IItemContent
     })
   })
   return newSchemas
