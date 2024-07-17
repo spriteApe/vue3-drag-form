@@ -1,6 +1,15 @@
 import type { IItem, IConfigOptions } from './types'
 import { ESymbols } from '@/components/visibleConfig/types'
-
+const defaultOptions = [
+  {
+    value: 'jack',
+    label: 'Jack'
+  },
+  {
+    value: 'lucy',
+    label: 'Lucy'
+  }
+]
 export const componentList: IItem[] = [
   {
     title: '按钮',
@@ -64,16 +73,7 @@ export const componentList: IItem[] = [
     icon: 'carbon:partition-same',
     componentProps: {
       placeholder: '请选择内容',
-      options: [
-        {
-          value: 'jack',
-          label: 'Jack'
-        },
-        {
-          value: 'lucy',
-          label: 'Lucy'
-        }
-      ]
+      options: defaultOptions
     },
     symbols: [
       ESymbols['EQUAL'],
@@ -90,16 +90,7 @@ export const componentList: IItem[] = [
     icon: 'carbon:checkbox-checked',
     componentProps: {
       placeholder: '请选择内容',
-      options: [
-        {
-          value: 'jack',
-          label: 'Jack'
-        },
-        {
-          value: 'lucy',
-          label: 'Lucy'
-        }
-      ]
+      options: defaultOptions
     },
     symbols: [
       ESymbols['EQUAL'],
@@ -125,16 +116,7 @@ export const componentList: IItem[] = [
     icon: 'carbon:radio-button-checked',
 
     componentProps: {
-      options: [
-        {
-          value: 'jack',
-          label: 'Jack'
-        },
-        {
-          value: 'lucy',
-          label: 'Lucy'
-        }
-      ]
+      options: defaultOptions
     },
     symbols: [ESymbols['EQUAL'], ESymbols['NOT_EQUAL'], ESymbols['EMPTY'], ESymbols['NOT_EMPTY']]
   },
@@ -148,7 +130,9 @@ export const componentList: IItem[] = [
       ESymbols['GREATER_THAN'],
       ESymbols['GREATER_THAN_EQUAL'],
       ESymbols['LESS_THAN'],
-      ESymbols['LESS_THAN_EQUAL']
+      ESymbols['LESS_THAN_EQUAL'],
+      ESymbols['EMPTY'],
+      ESymbols['NOT_EMPTY']
     ]
   }
 ]

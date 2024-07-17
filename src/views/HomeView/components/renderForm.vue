@@ -60,7 +60,7 @@ const getIndex = (array1: IItemContent[], array2: IItemContent[], id: string) =>
   return array2.findIndex((item) => item._id === id) // 隐藏的表单保持原来的位置
 }
 const getSchemas = (schemas: IItemContent[], formState: IFormState) => {
-  if (isEmpty(formState)) return schemas
+  // if (isEmpty(formState)) return schemas
   return schemas.filter((item) => !matchCondition(formState, item.hideCondition))
 }
 
@@ -80,6 +80,7 @@ const matchCondition = (formState: Record<string, any>, condition?: ICondition):
       // 继续使用默认比较方法
       return undefined
     }
+    const isObject = typeof formValue === 'object'
     switch (right.symbol) {
       case ESymbols.EQUAL:
         return isEqualWith(formValue, right.value, customizer)
@@ -94,23 +95,23 @@ const matchCondition = (formState: Record<string, any>, condition?: ICondition):
       case ESymbols.LESS_THAN_EQUAL:
         return formValue <= right.value
       case ESymbols.CONTAIN:
-        if (!Array.isArray(right.value)) return includes(formValue, right.value)
+        if (!isObject) return includes(formValue, right.value)
         {
           if (!formValue?.length) return false
           const includesList = formValue.filter((item: string) => right.value.includes(item))
           return !!includesList.length
         }
       case ESymbols.NOT_CONTAIN:
-        if (!Array.isArray(right.value)) return !includes(formValue, right.value)
+        if (!isObject) return !includes(formValue, right.value)
         {
           if (!formValue?.length) return true
           const includesList = formValue.filter((item: string) => right.value.includes(item))
           return !includesList.length
         }
       case ESymbols.EMPTY:
-        return isEmpty(formValue)
+        return isObject ? isEmpty(formValue) : !formValue
       case ESymbols.NOT_EMPTY:
-        return !isEmpty(formValue)
+        return isObject ? !isEmpty(formValue) : !!formValue
       default:
         return false
     }
