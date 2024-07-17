@@ -26,10 +26,10 @@ export const getInitFormProps = (): IFormProps => ({
 })
 
 export const getModelKey = (component: string) => {
-  if (['checkbox-group'].some((item) => component.includes(item))) {
+  if (['checkbox-group', 'radio-group'].some((item) => component.includes(item))) {
     return 'value'
   }
-  if (['checkbox', 'switch'].some((item) => component.includes(item))) {
+  if (['checkbox', 'radio', 'switch'].some((item) => component.includes(item))) {
     return 'checked'
   }
   return 'value'

@@ -118,6 +118,38 @@ export const componentList: IItem[] = [
       placeholder: '请选择日期'
     },
     symbols: [ESymbols['EQUAL'], ESymbols['NOT_EQUAL'], ESymbols['EMPTY'], ESymbols['NOT_EMPTY']]
+  },
+  {
+    title: '单选框',
+    component: 'a-radio-group',
+    icon: 'carbon:radio-button-checked',
+
+    componentProps: {
+      options: [
+        {
+          value: 'jack',
+          label: 'Jack'
+        },
+        {
+          value: 'lucy',
+          label: 'Lucy'
+        }
+      ]
+    },
+    symbols: [ESymbols['EQUAL'], ESymbols['NOT_EQUAL'], ESymbols['EMPTY'], ESymbols['NOT_EMPTY']]
+  },
+  {
+    title: '评分',
+    component: 'a-rate',
+    icon: 'carbon:star-filled',
+    symbols: [
+      ESymbols['EQUAL'],
+      ESymbols['NOT_EQUAL'],
+      ESymbols['GREATER_THAN'],
+      ESymbols['GREATER_THAN_EQUAL'],
+      ESymbols['LESS_THAN'],
+      ESymbols['LESS_THAN_EQUAL']
+    ]
   }
 ]
 
