@@ -216,6 +216,7 @@ export const componentConfigOptions: IConfigOptions[] = [
         placeholder: '请输入'
       }
     },
+    isForm: true,
     path: 'title'
   },
   {
@@ -226,6 +227,7 @@ export const componentConfigOptions: IConfigOptions[] = [
         placeholder: '请输入'
       }
     },
+    isForm: true,
     path: 'id'
   },
   {
@@ -244,6 +246,7 @@ export const componentConfigOptions: IConfigOptions[] = [
       component: 'requiredConfig',
       title: '必填'
     },
+    isForm: true,
     path: ['required', 'message']
   },
   {

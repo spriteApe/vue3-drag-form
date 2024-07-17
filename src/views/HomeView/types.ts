@@ -42,5 +42,6 @@ export type IFormState = Record<string, any>
 export type IConfigOptions = {
   options: IItem | IConfigList
   path: string | string[]
+  isForm?: boolean
 }
 export type IExportAndImportJSON = IFormProps & { schemas: IItemContent[] }

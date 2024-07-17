@@ -87,7 +87,7 @@ const handleConfigOptions = (
   ignoreNull = true
 ) => {
   const { options, path } = configOptions
-  if (!options.symbols && !ignoreNull) return options
+  if (!options.symbols && !ignoreNull) return options //过滤非表单组件
   if (typeof path === 'string') {
     if (get(obj, path) === undefined && ignoreNull) return
   } else {
@@ -98,8 +98,9 @@ const handleConfigOptions = (
   const item = getOption(options as IConfigList, obj, path)
   return handleOn(item)
 }
-const getComponent = (optionList: IConfigOptions[], obj: Record<string, any>) => {
+const getComponent = (optionList: IConfigOptions[], obj: Record<string, any>, isForm = true) => {
   return optionList
+    .filter((item) => isForm || !item.isForm)
     .map((item) => {
       return handleConfigOptions(
         {
@@ -126,7 +127,7 @@ export const useCompileConfigList = () => {
       configList.value = []
       return
     }
-    configList.value = getComponent(componentConfigOptions, item)
+    configList.value = getComponent(componentConfigOptions, item, !!item.symbols)
   }
   return {
     configList,
