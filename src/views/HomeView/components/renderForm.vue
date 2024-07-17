@@ -37,7 +37,7 @@ import type { Rule } from 'ant-design-vue/es/form'
 import type { FormInstance } from 'ant-design-vue'
 import { v4 as uuidv4 } from 'uuid'
 import { useDragFormStore } from '@/stores/dragForm'
-import { isEmpty } from 'lodash-es'
+import { includes, isEmpty, isEqual } from 'lodash-es'
 import type { IItemContent, IFormState } from '../types'
 import type { IRight, ICondition } from '@/components/visibleConfig/types'
 import { ECondition, ESymbols, EType } from '@/components/visibleConfig/types'
@@ -71,12 +71,11 @@ const matchCondition = (formState: Record<string, any>, condition?: ICondition):
     }
     if (!right.formId) return false
     const formValue = formState[right.formId]
-
     switch (right.symbol) {
       case ESymbols.EQUAL:
-        return formValue === right.value
+        return isEqual(formValue, right.value)
       case ESymbols.NOT_EQUAL:
-        return formValue !== right.value
+        return !isEqual(formValue, right.value)
       case ESymbols.GREATER_THAN:
         return formValue > right.value
       case ESymbols.GREATER_THAN_EQUAL:
@@ -86,9 +85,19 @@ const matchCondition = (formState: Record<string, any>, condition?: ICondition):
       case ESymbols.LESS_THAN_EQUAL:
         return formValue <= right.value
       case ESymbols.CONTAIN:
-        return formValue.includes(right.value)
+        if (!Array.isArray(right.value)) return includes(formValue, right.value)
+        {
+          if (!formValue?.length) return false
+          const includesList = formValue.filter((item: string) => right.value.includes(item))
+          return !!includesList.length
+        }
       case ESymbols.NOT_CONTAIN:
-        return !formValue.includes(right.value)
+        if (!Array.isArray(right.value)) return !includes(formValue, right.value)
+        {
+          if (!formValue?.length) return true
+          const includesList = formValue.filter((item: string) => right.value.includes(item))
+          return !includesList.length
+        }
       case ESymbols.EMPTY:
         return isEmpty(formValue)
       case ESymbols.NOT_EMPTY:

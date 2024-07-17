@@ -2,7 +2,7 @@
   <div class="h-full overflow-auto bg-gray-500/5">
     <VueDraggable
       class="grid grid-cols-3 gap-2 p-4 w-300px rounded"
-      v-model="componentList"
+      v-model="totalComponentList"
       :animation="150"
       ghostClass="ghost"
       :clone="clone"
@@ -10,7 +10,7 @@
       :group="{ name: 'people', pull: 'clone', put: false }"
     >
       <div
-        v-for="item in componentList"
+        v-for="item in totalComponentList"
         :key="item.component"
         class="cursor-move h-20 bg-gray-500/5 rounded flex flex-col justify-evenly items-center"
         @click="addComponent(item)"
@@ -31,6 +31,7 @@ import { useItemContent } from '../hooks'
 import { useDragFormStore } from '@/stores/dragForm'
 import { Icon } from '@iconify/vue'
 const dragFormStore = useDragFormStore()
+const totalComponentList = ref(componentList)
 
 function clone(element: IItem) {
   const itemContent = useItemContent(element, dragFormStore.formState)

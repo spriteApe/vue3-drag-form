@@ -83,6 +83,32 @@ export const componentList: IItem[] = [
       ESymbols['EMPTY'],
       ESymbols['NOT_EMPTY']
     ]
+  },
+  {
+    title: '多选框',
+    component: 'a-checkbox-group',
+    icon: 'carbon:partition-same',
+    componentProps: {
+      placeholder: '请选择内容',
+      options: [
+        {
+          value: 'jack',
+          label: 'Jack'
+        },
+        {
+          value: 'lucy',
+          label: 'Lucy'
+        }
+      ]
+    },
+    symbols: [
+      ESymbols['EQUAL'],
+      ESymbols['NOT_EQUAL'],
+      ESymbols['CONTAIN'],
+      ESymbols['NOT_CONTAIN'],
+      ESymbols['EMPTY'],
+      ESymbols['NOT_EMPTY']
+    ]
   }
 ]
 

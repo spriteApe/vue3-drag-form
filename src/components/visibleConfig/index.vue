@@ -11,7 +11,7 @@
 import { cloneDeep, isEmpty } from 'lodash-es'
 import renderTreeCondition from './renderTreeCondition.vue'
 import type { ICondition, IRight } from './types'
-import { EType } from './types'
+import { EType, ESymbols } from './types'
 import { getVisibleConfig } from './utils'
 const conditionList = defineModel<ICondition>('value', {
   required: true
@@ -32,7 +32,11 @@ const buttonDanger = computed(() => !isEmpty(conditionList.value))
 const filterRight = (rightList: IRight[]): IRight[] => {
   return rightList.filter((right) => {
     if (right.type === EType['CONDITION']) {
-      return right.formId && right.symbol && right.value
+      return (
+        right.formId &&
+        right.symbol &&
+        ([ESymbols['EMPTY'], ESymbols['NOT_EMPTY']].includes(right.symbol) || right.value)
+      )
     } else {
       return !isEmpty(filterNull(right.conditionGroup))
     }
