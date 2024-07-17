@@ -109,7 +109,7 @@ const getOptions = (list: IRight[], selectId?: string) => {
 
 const selectOptions = computed(() =>
   dragFormStore.schemas
-    .filter((item) => item !== dragFormStore.activeComponent)
+    .filter((item) => item !== dragFormStore.activeComponent && item.symbols)
     .map((item) => ({
       value: item._id,
       label: item.title || item._id
