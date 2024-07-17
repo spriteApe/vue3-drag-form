@@ -87,7 +87,7 @@ export const componentList: IItem[] = [
   {
     title: '多选框',
     component: 'a-checkbox-group',
-    icon: 'carbon:partition-same',
+    icon: 'carbon:checkbox-checked',
     componentProps: {
       placeholder: '请选择内容',
       options: [
@@ -109,6 +109,15 @@ export const componentList: IItem[] = [
       ESymbols['EMPTY'],
       ESymbols['NOT_EMPTY']
     ]
+  },
+  {
+    title: '日期选择器',
+    component: 'a-date-picker',
+    icon: 'carbon:calendar',
+    componentProps: {
+      placeholder: '请选择日期'
+    },
+    symbols: [ESymbols['EQUAL'], ESymbols['NOT_EQUAL'], ESymbols['EMPTY'], ESymbols['NOT_EMPTY']]
   }
 ]
 

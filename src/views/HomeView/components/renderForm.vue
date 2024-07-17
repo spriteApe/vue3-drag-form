@@ -37,10 +37,11 @@ import type { Rule } from 'ant-design-vue/es/form'
 import type { FormInstance } from 'ant-design-vue'
 import { v4 as uuidv4 } from 'uuid'
 import { useDragFormStore } from '@/stores/dragForm'
-import { includes, isEmpty, isEqual } from 'lodash-es'
+import { includes, isEmpty, isEqualWith } from 'lodash-es'
 import type { IItemContent, IFormState } from '../types'
 import type { IRight, ICondition } from '@/components/visibleConfig/types'
 import { ECondition, ESymbols, EType } from '@/components/visibleConfig/types'
+import dayjs, { type Dayjs } from 'dayjs'
 const dragFormStore = useDragFormStore()
 const props = withDefaults(
   defineProps<{
@@ -71,11 +72,19 @@ const matchCondition = (formState: Record<string, any>, condition?: ICondition):
     }
     if (!right.formId) return false
     const formValue = formState[right.formId]
+    // 自定义比较函数
+    const customizer = (objValue: Dayjs, othValue: Dayjs) => {
+      if (dayjs.isDayjs(objValue) && dayjs.isDayjs(othValue)) {
+        return objValue.isSame(othValue, 'day')
+      }
+      // 继续使用默认比较方法
+      return undefined
+    }
     switch (right.symbol) {
       case ESymbols.EQUAL:
-        return isEqual(formValue, right.value)
+        return isEqualWith(formValue, right.value, customizer)
       case ESymbols.NOT_EQUAL:
-        return !isEqual(formValue, right.value)
+        return !isEqualWith(formValue, right.value, customizer)
       case ESymbols.GREATER_THAN:
         return formValue > right.value
       case ESymbols.GREATER_THAN_EQUAL:
