@@ -174,7 +174,6 @@ export const useItemContent = (item: IItem, formState: IFormState, span = 24): I
   const itemClone = cloneDeep(item)
   // 默认值
   itemClone.required = itemClone.required ?? false
-  itemClone.visible = itemClone.visible ?? true
   itemClone.hideCondition = itemClone.hideCondition ?? {}
   itemClone.message = itemClone.message ?? ''
 

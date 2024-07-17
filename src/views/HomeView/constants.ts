@@ -20,6 +20,13 @@ export const componentList: IItem[] = [
     }
   },
   {
+    title: '数字输入框',
+    component: 'a-input-number',
+    componentProps: {
+      placeholder: '请输入'
+    }
+  },
+  {
     title: '开关',
     component: 'a-switch',
     componentProps: {

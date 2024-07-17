@@ -4,7 +4,6 @@ export type IListens = Record<string, (...any: any[]) => void>
 export type IItem = {
   title: string
   component: string
-  visible?: boolean
   required?: boolean
   message?: string
   hideCondition?: ICondition
