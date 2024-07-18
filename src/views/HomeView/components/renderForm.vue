@@ -135,7 +135,7 @@ const matchCondition = (formState: Record<string, any>, condition?: ICondition):
 }
 const showSchemas = computed({
   get() {
-    return getSchemas(schemas.value, currentFormState)
+    return props.isPreview ? getSchemas(schemas.value, currentFormState) : schemas.value
   },
   set(value) {
     schemas.value.sort((a, b) => {
