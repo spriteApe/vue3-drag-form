@@ -10,7 +10,7 @@
     >
     </a-select>
     <div class="flex-grow-1 flex-shrink-0" v-if="condition.right">
-      <div class="m-4 item-border" v-for="(item, inx) in condition.right" :key="inx">
+      <div class="rightItem" v-for="(item, inx) in condition.right" :key="inx">
         <template v-if="item.type === EType.CONDITION">
           <a-select
             v-model:value="item.formId"
@@ -136,8 +136,8 @@ const delFormStateList = (array: IRight[], index: number) => {
 }
 </script>
 <style lang="scss" scoped>
-.item-border {
-  @apply relative;
+.rightItem {
+  @apply relative m-4 flex items-center;
   &::before {
     @apply content-[''] absolute top-50% left-0 w-19 h-px bg-gray-2 transform-translate-y--50% transform-translate-x--100%;
   }
