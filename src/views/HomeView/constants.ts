@@ -10,57 +10,7 @@ const defaultOptions = [
     label: 'Lucy'
   }
 ]
-export const componentList: IItem[] = [
-  {
-    title: '按钮',
-    component: 'a-button',
-    width: 200,
-    slot: '默认按钮',
-    componentProps: {
-      type: 'primary'
-    },
-    icon: 'carbon:button-centered'
-  },
-  {
-    title: '表格',
-    component: 'a-table',
-    width: 300,
-    componentProps: {
-      pagination: false,
-      dataSource: [
-        {
-          key: '1',
-          name: '胡彦斌',
-          age: 32,
-          address: '西湖区湖底公园1号'
-        },
-        {
-          key: '2',
-          name: '胡彦祖',
-          age: 42,
-          address: '西湖区湖底公园1号'
-        }
-      ],
-      columns: [
-        {
-          title: '姓名',
-          dataIndex: 'name',
-          key: 'name'
-        },
-        {
-          title: '年龄',
-          dataIndex: 'age',
-          key: 'age'
-        },
-        {
-          title: '住址',
-          dataIndex: 'address',
-          key: 'address'
-        }
-      ]
-    },
-    icon: 'carbon:data-table'
-  },
+export const formComponentList: IItem[] = [
   {
     title: '输入框',
     component: 'a-input',
@@ -84,7 +34,8 @@ export const componentList: IItem[] = [
     component: 'a-input-number',
     icon: 'carbon:character-whole-number',
     componentProps: {
-      placeholder: '请输入'
+      placeholder: '请输入',
+      class: 'w-full'
     },
     symbols: [
       ESymbols['EQUAL'],
@@ -175,7 +126,58 @@ export const componentList: IItem[] = [
     ]
   }
 ]
-
+export const notFormComponentList: IItem[] = [
+  {
+    title: '按钮',
+    component: 'a-button',
+    width: 200,
+    slot: '默认按钮',
+    componentProps: {
+      type: 'primary'
+    },
+    icon: 'carbon:button-centered'
+  },
+  {
+    title: '表格',
+    component: 'a-table',
+    width: 300,
+    componentProps: {
+      pagination: false,
+      dataSource: [
+        {
+          key: '1',
+          name: '胡彦斌',
+          age: 32,
+          address: '西湖区湖底公园1号'
+        },
+        {
+          key: '2',
+          name: '胡彦祖',
+          age: 42,
+          address: '西湖区湖底公园1号'
+        }
+      ],
+      columns: [
+        {
+          title: '姓名',
+          dataIndex: 'name',
+          key: 'name'
+        },
+        {
+          title: '年龄',
+          dataIndex: 'age',
+          key: 'age'
+        },
+        {
+          title: '住址',
+          dataIndex: 'address',
+          key: 'address'
+        }
+      ]
+    },
+    icon: 'carbon:data-table'
+  }
+]
 export const formConfigOptions: IConfigOptions[] = [
   {
     options: {

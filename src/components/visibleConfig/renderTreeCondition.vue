@@ -69,7 +69,7 @@ import type { ICondition, IRight } from './types'
 import { ECondition, EType, symbolSelectOptions, ESymbols } from './types'
 import { useDragFormStore } from '@/stores/dragForm'
 import { useGetItemContent } from '@/views/HomeView/hooks'
-import { componentList } from '@/views/HomeView/constants'
+import { formComponentList } from '@/views/HomeView/constants'
 import dynamicRenderingComponent from '@/views/HomeView/components/dynamicRenderingComponent.vue'
 import { getCondition, getConditionGroup } from './utils'
 const dragFormStore = useDragFormStore()
@@ -89,7 +89,7 @@ const getSymbolOptions = (formId?: string) => {
   if (!formId) return []
   const thatSchema = dragFormStore.schemas.find((item) => item._id === formId)
   if (!thatSchema) return []
-  const thatComponent = componentList.find((item) => item.component === thatSchema.component)
+  const thatComponent = formComponentList.find((item) => item.component === thatSchema.component)
   if (!thatComponent?.symbols) return []
   return symbolSelectOptions.filter((item) => thatComponent.symbols!.includes(item.value))
 }
