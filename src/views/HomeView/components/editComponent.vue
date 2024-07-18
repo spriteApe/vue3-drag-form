@@ -3,8 +3,8 @@
     class="editComponent"
     :class="activeVisible ? 'editComponent--active' : ''"
     v-if="!isPreview"
-    @click="updateConfigList(item)"
   >
+    <div class="editComponent__mask" @click="updateConfigList(item)"></div>
     <slot></slot>
     <div class="absolute top-0 left-0 z-999" @click.stop v-show="activeVisible">
       <CopyOutlined class="cursor-pointer mx-2" @click="copyItem" />
@@ -54,6 +54,9 @@ const deleteItem = () => {
   border: 1px solid transparent;
   &--active {
     border-color: red;
+  }
+  &__mask {
+    @apply absolute top-0 left-0 w-full h-full z-100;
   }
 }
 </style>

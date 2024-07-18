@@ -7,7 +7,7 @@
     ref="formRef"
     autocomplete="off"
     @finish="onFinish"
-    class="p-4 h-full m-auto bg-gray-500/5 overflow-auto"
+    class="p-4 h-full m-auto overflow-auto"
   >
     <a-row>
       <VueDraggable

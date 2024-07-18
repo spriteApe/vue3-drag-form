@@ -3,7 +3,7 @@
     <div class="left">
       <componentDictionary />
     </div>
-    <div class="right flex-1 w-0 flex flex-col">
+    <div class="right flex-1 w-0 flex flex-col content-border">
       <div class="edit flex p-2 gap-2">
         <a-button type="primary" @click="dragFormStore.previewFormModalVisible = true"
           >预览</a-button
@@ -65,4 +65,9 @@ const handleClear = () => {
   })
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.content-border {
+  border-left: 1px solid #ccc;
+  border-right: 1px solid #ccc;
+}
+</style>
