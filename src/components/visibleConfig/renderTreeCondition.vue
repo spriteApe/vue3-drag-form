@@ -1,15 +1,16 @@
 <template>
-  <div class="flex items-center p-4">
+  <div class="renderTreeCondition">
     <a-select
       ref="select"
       v-model:value="selectValue"
       style="width: 120px"
       :options="conditionSelectOptions"
       placeholder="请选择条件"
+      class="flex-shrink-0 z-10"
     >
     </a-select>
-    <div class="flex-1" v-if="condition.right">
-      <div class="flex items-center p-4" v-for="(item, inx) in condition.right" :key="inx">
+    <div class="flex-grow-1 flex-shrink-0" v-if="condition.right">
+      <div class="m-4 item-border" v-for="(item, inx) in condition.right" :key="inx">
         <template v-if="item.type === EType.CONDITION">
           <a-select
             v-model:value="item.formId"
@@ -47,12 +48,20 @@
           </span>
         </template>
         <template v-else>
-          <renderTreeCondition :condition="item.conditionGroup!" />
+          <div class="bg-green/5 relative pb-2">
+            <renderTreeCondition :condition="item.conditionGroup!" />
+            <span
+              class="i-carbon:delete text-xl absolute top-0 right-0 c-red cursor-pointer"
+              @click="delFormStateList(condition.right, inx)"
+            ></span>
+          </div>
         </template>
       </div>
-      <a-button @click="addCondition(condition.right)">新增条件</a-button>
-      <a-button @click="addConditionGroup(condition.right)">新增条件组</a-button>
     </div>
+  </div>
+  <div class="ml-8 mb-4 flex gap-2">
+    <a-button @click="addCondition(condition.right!)">新增条件</a-button>
+    <a-button @click="addConditionGroup(condition.right!)">新增条件组</a-button>
   </div>
 </template>
 <script lang="ts" setup>
@@ -126,4 +135,17 @@ const delFormStateList = (array: IRight[], index: number) => {
   array.splice(index, 1)
 }
 </script>
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.item-border {
+  @apply relative;
+  &::before {
+    @apply content-[''] absolute top-50% left-0 w-19 h-px bg-gray-2 transform-translate-y--50% transform-translate-x--100%;
+  }
+}
+.renderTreeCondition {
+  @apply relative  flex items-center m-4;
+  &::before {
+    @apply z-2 content-[''] absolute top-0 left-60px  bottom-0 w-px my-32px bg-gray-2;
+  }
+}
+</style>

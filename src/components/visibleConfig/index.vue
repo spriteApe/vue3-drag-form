@@ -2,8 +2,10 @@
   <div>
     <a-button type="primary" :danger="buttonDanger" @click="open = true">设置隐藏条件</a-button>
     <a-modal v-model:open="open" title="隐藏条件" @ok="handleOk" :width="800">
-      <renderTreeCondition :condition="conditionCloned" />
-      <a-button @click="restState">重置隐藏条件</a-button>
+      <div class="h-140 overflow-auto">
+        <renderTreeCondition :condition="conditionCloned" />
+        <a-button @click="restState" danger>重置隐藏条件</a-button>
+      </div>
     </a-modal>
   </div>
 </template>
