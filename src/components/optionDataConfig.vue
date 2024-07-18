@@ -3,7 +3,7 @@
     <a-table :columns="columns" :data-source="dataSource" :pagination="false">
       <template #bodyCell="{ column, index }">
         <template v-if="column.key === 'label' || column.key === 'value'">
-          <a-input v-model:value="dataSource[index][column.key]" />
+          <a-input v-model:value="dataSource[index][column.key as keyof IDataSource[number]]" />
         </template>
         <template v-else-if="column.key === 'action'">
           <a-button type="link" @click="handleDelete(index)">删除</a-button>
@@ -32,7 +32,6 @@ const columns = [
 type IDataSource = {
   value: string
   label: string
-  [key: string]: any // 添加这一行，允许其他字段存在
 }[]
 const dataSource = defineModel<IDataSource>('value', {
   required: true
