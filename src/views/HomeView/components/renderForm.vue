@@ -25,12 +25,10 @@
           class="overflow-hidden"
         >
           <editComponent :item :isPreview>
-            <a-form-item
-              :label="item.symbols ? item.title : null"
-              :name="item.symbols ? item._id : null"
-            >
+            <a-form-item :label="item.title" :name="item._id" v-if="item.symbols">
               <dynamicRenderingComponent :item />
             </a-form-item>
+            <dynamicRenderingComponent :item v-else />
           </editComponent>
         </a-col>
       </VueDraggable>

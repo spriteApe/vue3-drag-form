@@ -140,7 +140,6 @@ export const notFormComponentList: IItem[] = [
   {
     title: '表格',
     component: 'a-table',
-    width: 300,
     componentProps: {
       pagination: false,
       dataSource: [
