@@ -1,6 +1,6 @@
 <template>
   <div class="flex h-screen">
-    <div class="left">
+    <div class="left w-80">
       <componentDictionary />
     </div>
     <div class="right flex-1 w-0 flex flex-col content-border">
@@ -24,7 +24,7 @@
         <renderForm />
       </div>
     </div>
-    <div class="config w-100 p-4 h-full overflow-auto">
+    <div class="config w-80 p-4 h-full overflow-auto">
       <optionConfig />
     </div>
   </div>
