@@ -3,7 +3,7 @@
     <a-table :columns="columns" :data-source="dataSource" :pagination="false">
       <template #bodyCell="{ column, index }">
         <template v-if="column.key === 'label' || column.key === 'value'">
-          <a-input v-model:value="dataSource[index][column.key as keyof IDataSource[number]]" />
+          <a-input v-model:value="dataSource[index][column.key as keyof IDataSourceItem]" />
         </template>
         <template v-else-if="column.key === 'action'">
           <a-button type="link" @click="handleDelete(index)">删除</a-button>
@@ -29,11 +29,11 @@ const columns = [
     key: 'action'
   }
 ]
-type IDataSource = {
+type IDataSourceItem = {
   value: string
   label: string
-}[]
-const dataSource = defineModel<IDataSource>('value', {
+}
+const dataSource = defineModel<IDataSourceItem[]>('value', {
   required: true
 })
 const handleDelete = (index: number) => {

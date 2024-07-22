@@ -160,18 +160,15 @@ export const notFormComponentList: IItem[] = [
       columns: [
         {
           title: '姓名',
-          dataIndex: 'name',
-          key: 'name'
+          dataIndex: 'name'
         },
         {
           title: '年龄',
-          dataIndex: 'age',
-          key: 'age'
+          dataIndex: 'age'
         },
         {
           title: '住址',
-          dataIndex: 'address',
-          key: 'address'
+          dataIndex: 'address'
         }
       ]
     },
@@ -292,6 +289,20 @@ export const componentConfigOptions: IConfigOptions[] = [
       title: '隐藏条件'
     },
     path: 'hideCondition'
+  },
+  {
+    options: {
+      component: 'tableDataSourceConfig',
+      title: '表格数据'
+    },
+    path: 'componentProps.dataSource'
+  },
+  {
+    options: {
+      component: 'tableColumnsConfig',
+      title: '表格列表'
+    },
+    path: ['componentProps.columns', 'componentProps.dataSource']
   },
   {
     options: {
