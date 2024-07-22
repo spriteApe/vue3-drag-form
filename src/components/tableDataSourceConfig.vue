@@ -4,10 +4,10 @@
       <a-textarea
         v-model:value="textareaValue"
         placeholder="请输入"
-        :auto-size="{ minRows: 2, maxRows: 5 }"
+        :auto-size="{ minRows: 5, maxRows: 10 }"
       />
     </a-modal>
-    <a-button type="primary" @click="modalOpen = true">编辑数据</a-button>
+    <a-button type="primary" @click="modalOpen = true">编辑表格数据</a-button>
   </div>
 </template>
 <script lang="ts" setup>
