@@ -9,14 +9,13 @@
     @finish="onFinish"
     class="p-4 h-full m-auto overflow-auto"
   >
-    <a-row>
+    <a-row class="h-full">
       <VueDraggable
         v-model="showSchemas"
         :animation="150"
         group="people"
-        :disabled="isPreview"
         ghostClass="ghost"
-        class="w-full flex flex-wrap"
+        class="w-full h-full"
       >
         <a-col
           :span="item.span"
@@ -136,6 +135,7 @@ const showSchemas = computed({
     return props.isPreview ? getSchemas(schemas.value, currentFormState) : schemas.value
   },
   set(value) {
+    schemas.value = [...value]
     schemas.value.sort((a, b) => {
       const aIndex = getIndex(value, schemas.value, a._id)
       const bIndex = getIndex(value, schemas.value, b._id)

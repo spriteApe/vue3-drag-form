@@ -32,9 +32,7 @@ const componentList = defineModel<IItem[]>({
 })
 const dragFormStore = useDragFormStore()
 function clone(element: IItem) {
-  const itemContent = useItemContent(element, dragFormStore.formState)
-  dragFormStore.schemas.push(itemContent)
-  return itemContent
+  return useItemContent(element, dragFormStore.formState)
 }
 const addComponent = (item: IItem) => {
   const itemContent = useItemContent(item, dragFormStore.formState)
